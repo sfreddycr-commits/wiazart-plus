@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard | Dyad</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background: #fafafa; color: #1a1a1a; min-height: 100vh; }
+        nav { max-width: 960px; margin: 0 auto; padding: 20px 24px; display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-size: 22px; font-weight: 800; }
+        .user-area { display: flex; align-items: center; gap: 16px; font-size: 14px; }
+        .badge { background: #f0f0f0; padding: 4px 12px; border-radius: 100px; font-size: 12px; font-weight: 700; text-transform: uppercase; }
+        .logout { color: #888; cursor: pointer; font-weight: 500; }
+        .logout:hover { color: #1a1a1a; }
+        .container { max-width: 960px; margin: 0 auto; padding: 20px 24px; }
+        .grid { display: grid; grid-template-columns: 2fr 1fr; gap: 24px; }
+        .card { background: #fff; border: 1px solid #e5e5e5; border-radius: 16px; padding: 32px; }
+        .card-label { font-size: 12px; font-weight: 600; color: #888; text-transform: uppercase; letter-spacing: .5px; margin-bottom: 20px; }
+        .api-key-box { background: #fafafa; border: 1px solid #e5e5e5; border-radius: 12px; padding: 16px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+        .api-key-value { font-family: 'SF Mono', 'Consolas', monospace; font-size: 14px; color: #333; word-break: break-all; }
+        .copy-btn { background: #fff; border: 1px solid #e0e0e0; padding: 6px 14px; border-radius: 8px; font-size: 12px; font-weight: 600; cursor: pointer; white-space: nowrap; }
+        .copy-btn:hover { background: #f5f5f5; }
+        .instructions { margin-top: 24px; }
+        .instructions h3 { font-size: 15px; font-weight: 700; margin-bottom: 12px; }
+        .instructions ol { padding-left: 20px; color: #555; font-size: 14px; line-height: 2; }
+        .stat-value { font-size: 32px; font-weight: 800; letter-spacing: -1px; margin: 8px 0; }
+        .stat-sub { font-size: 13px; color: #888; }
+        .progress-bg { height: 8px; background: #eee; border-radius: 10px; margin-top: 16px; overflow: hidden; }
+        .progress-fill { height: 100%; background: #1a1a1a; border-radius: 10px; transition: width .6s ease; }
+        .stacked { display: flex; flex-direction: column; gap: 24px; }
+    </style>
+    <script>
+        if (!localStorage.getItem('dyad_token')) window.location.href = '/login';
+    </script>
+</head>
+<body>
+    <nav>
+        <a href="/" class="logo">dyad</a>
+        <div class="user-area">
+            <span id="userEmail"></span>
+            <span class="badge" id="planBadge">FREE</span>
+            <a class="logout" onclick="localStorage.clear(); window.location.href='/login'">Log out</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="grid">
+            <div class="card">
+                <div class="card-label">Your API Key</div>
+                <p style="font-size: 14px; color: #666; margin-bottom: 16px;">Use this key in your Dyad Desktop App settings to unlock Pro features.</p>
+                <div class="api-key-box">
+                    <span class="api-key-value" id="apiKey">Loading...</span>
+                    <button class="copy-btn" onclick="copyKey()">Copy</button>
+                </div>
+                <div class="instructions">
+                    <h3>How to connect</h3>
+                    <ol>
+                        <li>Open Dyad Desktop App</li>
+                        <li>Go to <strong>Settings → Provider → Auto</strong></li>
+                        <li>Paste your API key above</li>
+                        <li>Set the Base URL to your dashboard server URL</li>
+                    </ol>
+                </div>
+            </div>
+
+            <div class="stacked">
+                <div class="card">
+                    <div class="card-label">AI Credits</div>
+                    <div class="stat-value" id="creditDisplay">0 / 0</div>
+                    <div class="stat-sub">Monthly usage</div>
+                    <div class="progress-bg"><div class="progress-fill" id="creditBar" style="width: 0%"></div></div>
+                </div>
+                <div class="card">
+                    <div class="card-label">Plan</div>
+                    <div class="stat-value" id="planName">—</div>
+                    <div class="stat-sub">Renews <span id="renewDate">—</span></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        async function loadProfile() {
+            const token = localStorage.getItem('dyad_token');
+            const res = await fetch('/api/user/profile', { headers: { Authorization: `Bearer ${token}` } });
+            if (!res.ok) { localStorage.clear(); window.location.href = '/login'; return; }
+            const u = await res.json();
+            document.getElementById('userEmail').textContent = u.email;
+            document.getElementById('planBadge').textContent = u.planId.toUpperCase();
+            document.getElementById('apiKey').textContent = u.apiKey;
+            document.getElementById('creditDisplay').textContent = `${u.usedCredits} / ${u.totalCredits}`;
+            document.getElementById('planName').textContent = u.planName;
+            document.getElementById('renewDate').textContent = new Date(u.resetDate).toLocaleDateString();
+            const pct = u.totalCredits > 0 ? (u.usedCredits / u.totalCredits) * 100 : 0;
+            document.getElementById('creditBar').style.width = pct + '%';
+        }
+
+        function copyKey() {
+            const key = document.getElementById('apiKey').textContent;
+            navigator.clipboard.writeText(key);
+            const btn = document.querySelector('.copy-btn');
+            btn.textContent = 'Copied!';
+            setTimeout(() => btn.textContent = 'Copy', 2000);
+        }
+
+        loadProfile();
+    </script>
+</body>
+</html>

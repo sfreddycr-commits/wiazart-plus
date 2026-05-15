@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin | Dyad</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background: #fafafa; color: #1a1a1a; min-height: 100vh; }
+        nav { max-width: 1100px; margin: 0 auto; padding: 20px 24px; display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-size: 22px; font-weight: 800; }
+        .logo span { font-weight: 400; color: #888; }
+        .nav-actions { display: flex; gap: 12px; align-items: center; }
+        .logout { color: #888; cursor: pointer; font-size: 14px; font-weight: 500; }
+        .container { max-width: 1100px; margin: 0 auto; padding: 20px 24px; }
+        .card { background: #fff; border: 1px solid #e5e5e5; border-radius: 16px; padding: 32px; }
+        .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+        .card-header h2 { font-size: 18px; font-weight: 700; }
+        .btn { padding: 10px 20px; border-radius: 10px; font-weight: 600; font-size: 14px; cursor: pointer; border: none; transition: all .2s; }
+        .btn-dark { background: #1a1a1a; color: #fff; }
+        .btn-dark:hover { background: #333; }
+        .btn-outline { background: #fff; border: 1px solid #e0e0e0; color: #1a1a1a; }
+        .btn-outline:hover { background: #f5f5f5; }
+        .btn-danger { background: #fff; border: 1px solid #fecaca; color: #dc2626; font-size: 13px; padding: 6px 14px; }
+        .btn-danger:hover { background: #fef2f2; }
+        table { width: 100%; border-collapse: collapse; }
+        th { text-align: left; padding: 14px 16px; font-size: 12px; font-weight: 600; color: #888; text-transform: uppercase; letter-spacing: .5px; border-bottom: 1px solid #eee; }
+        td { padding: 16px; border-bottom: 1px solid #f0f0f0; font-size: 14px; vertical-align: middle; }
+        .mono { font-family: 'SF Mono', 'Consolas', monospace; font-size: 12px; color: #555; background: #f5f5f5; padding: 3px 8px; border-radius: 4px; }
+        .badge { display: inline-block; padding: 3px 10px; border-radius: 100px; font-size: 11px; font-weight: 700; text-transform: uppercase; }
+        .badge-free { background: #f0f0f0; color: #888; }
+        .badge-pro { background: #e8e3ff; color: #5b21b6; }
+        .badge-max { background: #fce7f3; color: #be185d; }
+
+        /* Modal */
+        .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.3); display: none; justify-content: center; align-items: center; z-index: 100; }
+        .modal { background: #fff; border-radius: 20px; width: 420px; padding: 32px; border: 1px solid #e5e5e5; }
+        .modal h2 { font-size: 18px; font-weight: 700; margin-bottom: 20px; }
+        .field { margin-bottom: 16px; }
+        .field label { display: block; font-size: 13px; font-weight: 600; color: #555; margin-bottom: 6px; }
+        .field input, .field select { width: 100%; padding: 10px 14px; border: 1px solid #e0e0e0; border-radius: 10px; font-size: 14px; outline: none; }
+        .field input:focus, .field select:focus { border-color: #1a1a1a; }
+        .modal-actions { display: flex; gap: 10px; margin-top: 24px; }
+        .modal-actions .btn { flex: 1; }
+    </style>
+    <script>
+        if (!localStorage.getItem('dyad_token')) window.location.href = '/login';
+        const u = JSON.parse(localStorage.getItem('dyad_user'));
+        if (!u?.isAdmin) window.location.href = '/dashboard';
+    </script>
+</head>
+<body>
+    <nav>
+        <a href="/" class="logo">dyad <span>admin</span></a>
+        <div class="nav-actions">
+            <a href="/" class="btn btn-outline" style="font-size: 13px;">View Site</a>
+            <a class="logout" onclick="localStorage.clear(); window.location.href='/login'">Log out</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <!-- AI Providers Section -->
+        <div class="card" style="margin-bottom: 24px;">
+            <div class="card-header">
+                <h2>AI Provider <span style="font-size:13px; color:#888; font-weight:400;">(All requests route through the active provider)</span></h2>
+                <button class="btn btn-dark" onclick="openProviderModal()">+ Add Provider</button>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Provider</th>
+                        <th>Base URL</th>
+                        <th>Model Override</th>
+                        <th>API Key</th>
+                        <th>Status</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody id="providerList"></tbody>
+            </table>
+        </div>
+
+        <!-- Users Section -->
+        <div class="card">
+            <div class="card-header">
+                <h2>Users</h2>
+                <button class="btn btn-dark" onclick="openModal()">+ Add User</button>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>User</th>
+                        <th>Plan</th>
+                        <th>API Key</th>
+                        <th>Credits</th>
+                        <th>Created</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody id="userList"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="overlay" id="modal">
+        <div class="modal">
+            <h2>Add User</h2>
+            <div class="field"><label>Email</label><input type="email" id="newEmail" placeholder="user@example.com"></div>
+            <div class="field"><label>Password</label><input type="password" id="newPass" value="user123"></div>
+            <div class="field">
+                <label>Plan</label>
+                <select id="newPlan">
+                    <option value="free">Free</option>
+                    <option value="pro" selected>Pro</option>
+                    <option value="max">Max</option>
+                </select>
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-outline" onclick="closeModal()">Cancel</button>
+                <button class="btn btn-dark" onclick="createUser()">Create</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="overlay" id="providerModal">
+        <div class="modal">
+            <h2>Add AI Provider</h2>
+            <div class="field"><label>Provider Name</label><input type="text" id="provName" placeholder="e.g. MiniMax, OpenAI"></div>
+            <div class="field"><label>Base URL</label><input type="text" id="provUrl" placeholder="https://api.minimax.io/v1"></div>
+            <div class="field"><label>API Key</label><input type="text" id="provKey" placeholder="sk-..."></div>
+            <div class="field"><label>Model Name Override (optional)</label><input type="text" id="provModel" placeholder="e.g. MiniMax-M1, gpt-4o"></div>
+            <div class="modal-actions">
+                <button class="btn btn-outline" onclick="closeProviderModal()">Cancel</button>
+                <button class="btn btn-dark" onclick="createProvider()">Add Provider</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ── Provider Functions ──
+        async function loadProviders() {
+            const res = await fetch('/api/admin/providers');
+            const providers = await res.json();
+            const list = document.getElementById('providerList');
+            list.innerHTML = '';
+            providers.forEach(p => {
+                const tr = document.createElement('tr');
+                const maskedKey = p.api_key.substring(0, 8) + '••••••••';
+                const statusHtml = p.is_active
+                    ? '<span style="color:#16a34a; font-weight:700;">● ACTIVE</span>'
+                    : `<button class="btn btn-outline" style="font-size:12px;padding:4px 12px;" onclick="activateProvider(${p.id})">Activate</button>`;
+                tr.innerHTML = `
+                    <td style="font-weight:600">${p.name}</td>
+                    <td><span class="mono">${p.base_url}</span></td>
+                    <td>${p.model_name || '<span style="color:#aaa">—</span>'}</td>
+                    <td><span class="mono">${maskedKey}</span></td>
+                    <td>${statusHtml}</td>
+                    <td><button class="btn btn-danger" onclick="deleteProvider(${p.id})">Delete</button></td>
+                `;
+                list.appendChild(tr);
+            });
+        }
+
+        function openProviderModal() { document.getElementById('providerModal').style.display = 'flex'; }
+        function closeProviderModal() { document.getElementById('providerModal').style.display = 'none'; }
+
+        async function createProvider() {
+            const res = await fetch('/api/admin/providers', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    name: document.getElementById('provName').value,
+                    baseUrl: document.getElementById('provUrl').value,
+                    apiKey: document.getElementById('provKey').value,
+                    modelName: document.getElementById('provModel').value,
+                })
+            });
+            if (res.ok) { closeProviderModal(); loadProviders(); }
+            else { const d = await res.json(); alert(d.error); }
+        }
+
+        async function activateProvider(id) {
+            await fetch(`/api/admin/providers/${id}/activate`, { method: 'POST' });
+            loadProviders();
+        }
+
+        async function deleteProvider(id) {
+            if (!confirm('Delete this provider?')) return;
+            await fetch(`/api/admin/providers/${id}`, { method: 'DELETE' });
+            loadProviders();
+        }
+
+        // ── User Functions ──
+        async function loadUsers() {
+            const res = await fetch('/api/admin/users');
+            const users = await res.json();
+            const list = document.getElementById('userList');
+            list.innerHTML = '';
+            users.forEach(u => {
+                const badgeClass = u.plan_id === 'max' ? 'badge-max' : u.plan_id === 'pro' ? 'badge-pro' : 'badge-free';
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>
+                        <div style="font-weight:600">${u.user_id}</div>
+                        <div style="font-size:12px;color:#888">${u.email}</div>
+                    </td>
+                    <td><span class="badge ${badgeClass}">${u.plan_name || u.plan_id}</span></td>
+                    <td><span class="mono">${u.api_key}</span></td>
+                    <td>${u.used_credits} / ${u.total_credits}</td>
+                    <td style="font-size:12px;color:#888">${new Date(u.created_at).toLocaleDateString()}</td>
+                    <td>${u.is_admin ? '' : `<button class="btn btn-danger" onclick="deleteUser(${u.id})">Delete</button>`}</td>
+                `;
+                list.appendChild(tr);
+            });
+        }
+
+        function openModal() { document.getElementById('modal').style.display = 'flex'; }
+        function closeModal() { document.getElementById('modal').style.display = 'none'; }
+
+        async function createUser() {
+            const res = await fetch('/api/admin/users', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    email: document.getElementById('newEmail').value,
+                    password: document.getElementById('newPass').value,
+                    planId: document.getElementById('newPlan').value
+                })
+            });
+            if (res.ok) { closeModal(); loadUsers(); }
+            else { const d = await res.json(); alert(d.error); }
+        }
+
+        async function deleteUser(id) {
+            if (!confirm('Delete this user?')) return;
+            await fetch(`/api/admin/users/${id}`, { method: 'DELETE' });
+            loadUsers();
+        }
+
+        loadProviders();
+        loadUsers();
+    </script>
+</body>
+</html>

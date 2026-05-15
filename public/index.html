@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dyad | Flexible, local, open-source AI app builder</title>
+    <meta name="description" content="Use your favorite AI models and tools to build AI apps locally. Zero lock-in.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', -apple-system, sans-serif; color: #1a1a1a; background: #fff; -webkit-font-smoothing: antialiased; }
+        a { text-decoration: none; color: inherit; }
+
+        /* ── Nav ── */
+        nav { max-width: 1200px; margin: 0 auto; padding: 20px 24px; display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-size: 22px; font-weight: 800; letter-spacing: -0.5px; }
+        .nav-links { display: flex; gap: 28px; align-items: center; list-style: none; }
+        .nav-links a { font-size: 15px; font-weight: 500; color: #555; transition: color .2s; }
+        .nav-links a:hover { color: #000; }
+        .nav-cta { background: #1a1a1a; color: #fff !important; padding: 8px 18px; border-radius: 8px; font-size: 14px; font-weight: 600; transition: background .2s; }
+        .nav-cta:hover { background: #333; }
+
+        /* ── Hero ── */
+        .hero { max-width: 800px; margin: 80px auto 0; text-align: center; padding: 0 24px; }
+        .hero h1 { font-size: 56px; font-weight: 800; letter-spacing: -2px; line-height: 1.1; margin-bottom: 20px; }
+        .hero p { font-size: 19px; color: #666; max-width: 520px; margin: 0 auto 36px; line-height: 1.6; }
+        .hero-buttons { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+        .btn { display: inline-flex; align-items: center; gap: 8px; padding: 13px 24px; border-radius: 10px; font-weight: 600; font-size: 15px; border: none; cursor: pointer; transition: all .2s; }
+        .btn-dark { background: #1a1a1a; color: #fff; }
+        .btn-dark:hover { background: #333; transform: translateY(-1px); }
+        .btn-outline { background: #fff; color: #1a1a1a; border: 1px solid #e0e0e0; }
+        .btn-outline:hover { border-color: #999; }
+
+        /* ── Section ── */
+        section { max-width: 1200px; margin: 0 auto; padding: 100px 24px; }
+        .section-label { font-size: 14px; font-weight: 600; color: #888; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; }
+        .section-title { font-size: 36px; font-weight: 800; letter-spacing: -1px; margin-bottom: 16px; }
+        .section-subtitle { font-size: 18px; color: #666; max-width: 600px; line-height: 1.6; }
+
+        /* ── Features Grid ── */
+        .features-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-top: 48px; }
+        .feature-card { padding: 32px; border: 1px solid #eee; border-radius: 16px; transition: border-color .2s; }
+        .feature-card:hover { border-color: #ccc; }
+        .feature-card h3 { font-size: 18px; font-weight: 700; margin-bottom: 10px; }
+        .feature-card p { font-size: 15px; color: #666; line-height: 1.6; }
+
+        /* ── Pricing ── */
+        #pricing { background: #fafafa; border-radius: 32px; margin: 80px auto; max-width: 1200px; }
+        .pricing-header { text-align: center; margin-bottom: 48px; }
+        .pricing-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+        .pricing-card { background: #fff; border: 1px solid #e5e5e5; border-radius: 20px; padding: 36px; display: flex; flex-direction: column; }
+        .pricing-card.featured { border: 2px solid #1a1a1a; position: relative; }
+        .pricing-card.featured::before {
+            content: 'Most Popular'; position: absolute; top: -13px; left: 50%; transform: translateX(-50%);
+            background: #1a1a1a; color: #fff; padding: 4px 16px; border-radius: 100px;
+            font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .5px;
+        }
+        .plan-name { font-size: 20px; font-weight: 700; margin-bottom: 8px; }
+        .plan-price { font-size: 48px; font-weight: 800; margin: 16px 0; letter-spacing: -2px; }
+        .plan-price span { font-size: 16px; font-weight: 500; color: #888; letter-spacing: 0; }
+        .plan-desc { font-size: 14px; color: #888; margin-bottom: 24px; }
+        .plan-features { list-style: none; margin-bottom: 32px; flex-grow: 1; }
+        .plan-features li { padding: 8px 0; font-size: 14px; color: #444; display: flex; align-items: flex-start; gap: 10px; }
+        .plan-features li::before { content: '✓'; font-weight: 800; color: #1a1a1a; flex-shrink: 0; }
+        .plan-btn { width: 100%; text-align: center; padding: 14px; border-radius: 10px; font-weight: 600; font-size: 15px; border: 1px solid #e0e0e0; background: #fff; color: #1a1a1a; cursor: pointer; transition: all .2s; }
+        .plan-btn:hover { background: #f5f5f5; }
+        .plan-btn-primary { background: #1a1a1a; color: #fff; border-color: #1a1a1a; }
+        .plan-btn-primary:hover { background: #333; }
+
+        /* ── Testimonials ── */
+        .testimonials-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; margin-top: 48px; }
+        .testimonial { padding: 28px; border: 1px solid #eee; border-radius: 16px; }
+        .testimonial p { font-size: 15px; color: #444; line-height: 1.7; font-style: italic; margin-bottom: 16px; }
+        .testimonial-author { font-size: 13px; font-weight: 600; color: #888; }
+
+        /* ── Quote ── */
+        .founder-quote { max-width: 700px; margin: 0 auto; text-align: center; padding: 80px 24px; }
+        .founder-quote blockquote { font-size: 20px; line-height: 1.7; color: #444; font-style: italic; margin-bottom: 24px; }
+        .founder-quote .author { font-weight: 700; }
+        .founder-quote .role { color: #888; font-size: 14px; }
+
+        /* ── Footer ── */
+        footer { text-align: center; padding: 48px 24px; border-top: 1px solid #eee; font-size: 14px; color: #888; }
+        footer a { color: #555; margin: 0 12px; }
+
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 36px; }
+            .features-grid, .pricing-grid, .testimonials-grid { grid-template-columns: 1fr; }
+            .nav-links { display: none; }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="/" class="logo">dyad</a>
+        <ul class="nav-links">
+            <li><a href="#">Docs</a></li>
+            <li><a href="#">Blog</a></li>
+            <li><a href="#">Hub</a></li>
+            <li><a href="/login">Members</a></li>
+            <li><a href="/login" class="nav-cta">Login</a></li>
+        </ul>
+    </nav>
+
+    <div class="hero">
+        <h1>Use your favorite AI models and tools. Zero lock-in.</h1>
+        <p>Build AI apps locally with deep customization and just enough structure so you never feel lost.</p>
+        <div class="hero-buttons">
+            <a href="#pricing" class="btn btn-dark">View Plans</a>
+            <a href="#features" class="btn btn-outline">Learn More</a>
+        </div>
+    </div>
+
+    <section id="features">
+        <div class="section-label">Why Dyad</div>
+        <h2 class="section-title">Build without limits</h2>
+        <p class="section-subtitle">Dyad never traps you in a proprietary ecosystem—your models, your tools, your code.</p>
+
+        <div class="features-grid">
+            <div class="feature-card">
+                <h3>Use any AI model</h3>
+                <p>Works with OpenAI, Google, Anthropic, and free models. Add almost any model in seconds.</p>
+            </div>
+            <div class="feature-card">
+                <h3>Your code stays yours</h3>
+                <p>Import existing apps or export anytime. Switch freely between Dyad and other tools.</p>
+            </div>
+            <div class="feature-card">
+                <h3>Bring your own tools</h3>
+                <p>Extend with any MCP server. Use any template or JavaScript framework.</p>
+            </div>
+            <div class="feature-card">
+                <h3>Build full-stack with Supabase</h3>
+                <p>Connect your accounts and get instant database, auth, and server function support.</p>
+            </div>
+            <div class="feature-card">
+                <h3>Security reviews built-in</h3>
+                <p>Scan for critical security issues and get clear fixes before they become headaches.</p>
+            </div>
+            <div class="feature-card">
+                <h3>Publish anywhere</h3>
+                <p>Deploy to GitHub and Vercel in a few clicks—or bring your own cloud.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="pricing">
+        <div class="pricing-header">
+            <div class="section-label">Pricing</div>
+            <h2 class="section-title">Simple, transparent pricing</h2>
+            <p class="section-subtitle" style="margin: 0 auto;">Choose the plan that fits your needs. Upgrade or downgrade anytime—no lock-in, ever.</p>
+        </div>
+        <div class="pricing-grid" id="pricingGrid">
+            <!-- Loaded dynamically from /api/plans -->
+        </div>
+    </section>
+
+    <section>
+        <div class="section-label">Community</div>
+        <h2 class="section-title">Loved by builders worldwide</h2>
+        <p class="section-subtitle">See what users are saying about Dyad.</p>
+        <div class="testimonials-grid">
+            <div class="testimonial">
+                <p>"I have used Lovable, Base44, MGX, bolt, replit, and a few others, and I have to say, DYAD is the best tool out there!"</p>
+                <div class="testimonial-author">Community Member</div>
+            </div>
+            <div class="testimonial">
+                <p>"Dyad completely changed the way I build web interfaces. It feels like having a design and dev partner that truly understands my ideas."</p>
+                <div class="testimonial-author">@Fluxer_automações</div>
+            </div>
+            <div class="testimonial">
+                <p>"Will, you're a genius. This is better than 95% of the other things I have tried, and I've tried them all going back 25 years."</p>
+                <div class="testimonial-author">u/stevilg</div>
+            </div>
+            <div class="testimonial">
+                <p>"I'm ready to go all in on Dyad. Open source, AI agnostic, runs locally... feels unreal."</p>
+                <div class="testimonial-author">@GGManera</div>
+            </div>
+        </div>
+    </section>
+
+    <div class="founder-quote">
+        <blockquote>"I built Dyad as a local, open-source AI app builder because you should feel like an owner, not a renter. We believe in flexibility, not lock-in."</blockquote>
+        <div class="author">Will Chen</div>
+        <div class="role">Creator of Dyad</div>
+    </div>
+
+    <footer>
+        <p>Built with care by the Dyad team</p>
+        <div style="margin-top: 12px;">
+            <a href="#">Terms of Service</a>
+            <a href="#">Privacy Policy</a>
+        </div>
+    </footer>
+
+    <script>
+        async function loadPlans() {
+            const res = await fetch('/api/plans');
+            const plans = await res.json();
+            const grid = document.getElementById('pricingGrid');
+
+            plans.forEach(plan => {
+                const isFeatured = plan.id === 'pro';
+                const card = document.createElement('div');
+                card.className = 'pricing-card' + (isFeatured ? ' featured' : '');
+
+                const featuresHtml = plan.features.map(f => `<li>${f}</li>`).join('');
+                const priceDisplay = plan.price === 0 ? 'Free' : `$${plan.price}<span>/month</span>`;
+                const btnClass = isFeatured ? 'plan-btn plan-btn-primary' : 'plan-btn';
+                const btnText = plan.price === 0 ? 'Get Started' : `Subscribe to ${plan.name.split(' ').pop()}`;
+                const href = plan.price === 0 ? '#features' : `/checkout?plan=${plan.id}`;
+
+                card.innerHTML = `
+                    <div class="plan-name">${plan.name}</div>
+                    <div class="plan-price">${priceDisplay}</div>
+                    <ul class="plan-features">${featuresHtml}</ul>
+                    <a href="${href}" class="${btnClass}">${btnText}</a>
+                `;
+                grid.appendChild(card);
+            });
+        }
+        loadPlans();
+    </script>
+</body>
+</html>

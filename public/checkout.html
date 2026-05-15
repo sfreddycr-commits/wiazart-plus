@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout | Dyad</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background: #fafafa; color: #1a1a1a; min-height: 100vh; display: flex; justify-content: center; align-items: center; }
+        .checkout-box { background: #fff; border: 1px solid #e5e5e5; border-radius: 20px; width: 460px; overflow: hidden; }
+        .plan-summary { padding: 28px 36px; border-bottom: 1px solid #eee; }
+        .plan-summary .label { font-size: 13px; color: #888; font-weight: 500; margin-bottom: 4px; }
+        .plan-summary .plan-row { display: flex; justify-content: space-between; align-items: baseline; }
+        .plan-summary .plan-name { font-size: 20px; font-weight: 700; }
+        .plan-summary .plan-price { font-size: 28px; font-weight: 800; }
+        .plan-summary .plan-price span { font-size: 14px; font-weight: 500; color: #888; }
+        .plan-summary .plan-features { margin-top: 16px; list-style: none; }
+        .plan-summary .plan-features li { font-size: 13px; color: #555; padding: 4px 0; display: flex; align-items: center; gap: 8px; }
+        .plan-summary .plan-features li::before { content: '✓'; font-weight: 800; color: #1a1a1a; }
+        .form-area { padding: 28px 36px; }
+        .field { margin-bottom: 18px; }
+        .field label { display: block; font-size: 13px; font-weight: 600; color: #555; margin-bottom: 6px; }
+        .field input { width: 100%; padding: 12px 14px; border: 1px solid #e0e0e0; border-radius: 10px; font-size: 15px; outline: none; }
+        .field input:focus { border-color: #1a1a1a; }
+        .btn { width: 100%; padding: 14px; background: #1a1a1a; color: #fff; border: none; border-radius: 10px; font-weight: 600; font-size: 15px; cursor: pointer; }
+        .btn:hover { background: #333; }
+        .error { background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; padding: 10px; border-radius: 8px; font-size: 13px; margin-bottom: 16px; display: none; }
+        .back { display: block; text-align: center; margin-top: 16px; font-size: 13px; color: #888; }
+        .back a { color: #1a1a1a; font-weight: 600; }
+    </style>
+</head>
+<body>
+    <div class="checkout-box">
+        <div class="plan-summary">
+            <div class="label">You're subscribing to</div>
+            <div class="plan-row">
+                <div class="plan-name" id="planName">Dyad Pro</div>
+                <div class="plan-price" id="planPrice">$20<span>/mo</span></div>
+            </div>
+            <ul class="plan-features" id="planFeatures"></ul>
+        </div>
+        <div class="form-area">
+            <div id="error" class="error"></div>
+            <form id="checkoutForm">
+                <div class="field">
+                    <label>Email</label>
+                    <input type="email" id="email" placeholder="you@example.com" required>
+                </div>
+                <div class="field">
+                    <label>Create Password</label>
+                    <input type="password" id="password" placeholder="Min 6 characters" required minlength="6">
+                </div>
+                <button type="submit" class="btn">Create Account & Subscribe</button>
+            </form>
+            <div class="back"><a href="/">← Back to plans</a></div>
+        </div>
+    </div>
+    <script>
+        const planId = new URLSearchParams(window.location.search).get('plan') || 'pro';
+
+        async function loadPlan() {
+            const res = await fetch('/api/plans');
+            const plans = await res.json();
+            const plan = plans.find(p => p.id === planId);
+            if (!plan) { document.getElementById('planName').textContent = 'Plan not found'; return; }
+            document.getElementById('planName').textContent = plan.name;
+            document.getElementById('planPrice').innerHTML = plan.price === 0 ? 'Free' : `$${plan.price}<span>/mo</span>`;
+            document.getElementById('planFeatures').innerHTML = plan.features.map(f => `<li>${f}</li>`).join('');
+        }
+        loadPlan();
+
+        document.getElementById('checkoutForm').onsubmit = async (e) => {
+            e.preventDefault();
+            const errDiv = document.getElementById('error');
+            errDiv.style.display = 'none';
+            const res = await fetch('/api/auth/signup', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    email: document.getElementById('email').value,
+                    password: document.getElementById('password').value,
+                    planId
+                })
+            });
+            const data = await res.json();
+            if (res.ok) {
+                localStorage.setItem('dyad_token', data.token);
+                localStorage.setItem('dyad_user', JSON.stringify(data.user));
+                window.location.href = '/dashboard';
+            } else {
+                errDiv.textContent = data.error;
+                errDiv.style.display = 'block';
+            }
+        };
+    </script>
+</body>
+</html>
