@@ -7,190 +7,338 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
     <style>
         :root {
-            --bg-dark: #0a0514;
-            --bg-card: rgba(255, 255, 255, 0.02);
-            --border-glass: rgba(255, 255, 255, 0.08);
-            --text-main: #f0f0f5;
-            --text-muted: #8c8c9e;
-            --accent-primary: #8a2be2;
-            --accent-secondary: #00ffff;
+            --primary: #6d28d9;
+            --primary-light: #8b5cf6;
+            --secondary: #0ea5e9;
+            --bg-body: #f8fafc;
+            --bg-card: #ffffff;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --sidebar-width: 260px;
         }
 
-        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         
         body { 
-            font-family: 'Outfit', sans-serif; 
-            background: var(--bg-dark); 
+            font-family: 'Inter', sans-serif; 
+            background: var(--bg-body); 
             color: var(--text-main);
             min-height: 100vh;
-            background-image: 
-                radial-gradient(circle at 0% 0%, rgba(138, 43, 226, 0.05), transparent 40%),
-                radial-gradient(circle at 100% 100%, rgba(0, 255, 255, 0.05), transparent 40%);
+            display: flex;
         }
 
-        .glass-panel {
-            background: var(--bg-card);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid var(--border-glass);
-            border-radius: 24px;
+        h1, h2, h3, .logo-text { font-family: 'Outfit', sans-serif; }
+
+        /* ── Sidebar ── */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: #fff;
+            border-right: 1px solid var(--border);
+            height: 100vh;
+            position: fixed;
+            left: 0; top: 0;
+            display: flex;
+            flex-direction: column;
+            z-index: 100;
+            transition: transform 0.3s ease;
         }
 
-        nav { 
-            max-width: 1100px; 
-            margin: 20px auto; 
-            padding: 16px 32px; 
-            display: flex; 
-            justify-content: space-between; 
+        .sidebar-header {
+            padding: 32px 24px;
+            display: flex;
             align-items: center;
+            gap: 12px;
         }
-        
-        .logo-area { display: flex; align-items: center; gap: 12px; }
-        .logo-img { width: 32px; height: 32px; filter: drop-shadow(0 0 10px rgba(138,43,226,0.5)); }
-        .logo-text { font-size: 22px; font-weight: 800; background: linear-gradient(90deg, #fff, #b3b3ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
 
-        .user-area { display: flex; align-items: center; gap: 20px; font-size: 14px; }
-        .badge { 
-            background: linear-gradient(135deg, var(--accent-primary), #5a189a); 
-            padding: 6px 16px; 
-            border-radius: 100px; 
-            font-size: 11px; 
-            font-weight: 800; 
-            letter-spacing: 1px;
+        .logo-box {
+            width: 40px; height: 40px;
+            background: var(--primary);
+            border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
             color: #fff;
-            box-shadow: 0 4px 12px rgba(138, 43, 226, 0.3);
-        }
-        .logout { color: var(--text-muted); cursor: pointer; font-weight: 600; transition: color 0.2s; }
-        .logout:hover { color: #fff; }
-
-        .container { max-width: 1100px; margin: 0 auto; padding: 20px 32px; }
-        
-        .welcome-section { margin-bottom: 40px; }
-        .welcome-section h1 { font-size: 32px; font-weight: 700; margin-bottom: 8px; }
-        .welcome-section p { color: var(--text-muted); font-family: 'Inter', sans-serif; }
-
-        .grid { display: grid; grid-template-columns: 1.8fr 1fr; gap: 32px; }
-        
-        .card { padding: 40px; position: relative; overflow: hidden; }
-        .card-label { 
-            font-size: 12px; font-weight: 700; color: var(--accent-secondary); 
-            text-transform: uppercase; letter-spacing: 2px; margin-bottom: 24px; 
+            box-shadow: 0 4px 12px rgba(109, 40, 217, 0.2);
         }
 
-        .api-key-box { 
-            background: rgba(255,255,255,0.03); 
-            border: 1px solid var(--border-glass); 
-            border-radius: 16px; 
-            padding: 20px; 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            margin-bottom: 32px; 
-            transition: all 0.3s ease;
-        }
-        .api-key-box:hover { background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.15); }
-        .api-key-value { font-family: 'SF Mono', monospace; font-size: 15px; color: #fff; word-break: break-all; opacity: 0.9; }
-        
-        .copy-btn { 
-            background: #fff; color: #000; padding: 8px 18px; border: none;
-            border-radius: 10px; font-size: 13px; font-weight: 700; cursor: pointer; 
+        .logo-text { font-size: 24px; font-weight: 800; color: var(--text-main); }
+
+        .nav-list { list-style: none; padding: 0 16px; flex: 1; }
+        .nav-item { margin-bottom: 4px; }
+        .nav-link {
+            display: flex; align-items: center; gap: 12px;
+            padding: 12px 16px;
+            border-radius: 12px;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 15px;
             transition: all 0.2s;
         }
-        .copy-btn:hover { transform: scale(1.05); background: #eee; }
+        .nav-link:hover { background: #f1f5f9; color: var(--primary); }
+        .nav-link.active { background: #f5f3ff; color: var(--primary); }
+        .nav-link i { width: 20px; height: 20px; }
 
-        .instructions { margin-top: 32px; border-top: 1px solid var(--border-glass); padding-top: 24px; }
-        .instructions h3 { font-size: 18px; font-weight: 700; margin-bottom: 16px; color: #fff; }
-        .instructions ol { padding-left: 20px; color: var(--text-muted); font-size: 15px; line-height: 2.2; font-family: 'Inter', sans-serif;}
-        .instructions strong { color: var(--text-main); }
+        .sidebar-footer { padding: 24px 16px; border-top: 1px solid var(--border); }
 
-        .stat-value { font-size: 42px; font-weight: 800; letter-spacing: -1px; margin: 8px 0; color: #fff; }
-        .stat-sub { font-size: 14px; color: var(--text-muted); font-family: 'Inter', sans-serif; }
-        
-        .progress-bg { height: 10px; background: rgba(255,255,255,0.05); border-radius: 10px; margin-top: 20px; overflow: hidden; }
-        .progress-fill { 
-            height: 100%; 
-            background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary)); 
-            border-radius: 10px; 
-            transition: width 1s cubic-bezier(0.16, 1, 0.3, 1); 
-            box-shadow: 0 0 15px rgba(138, 43, 226, 0.4);
+        /* ── Main Content ── */
+        .main-content {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            padding: 40px;
+            width: calc(100% - var(--sidebar-width));
         }
 
-        .stacked { display: flex; flex-direction: column; gap: 32px; }
-
-        @media (max-width: 900px) {
-            .grid { grid-template-columns: 1fr; }
+        .top-bar {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 40px;
         }
+
+        .user-profile {
+            display: flex; align-items: center; gap: 12px;
+            background: #fff; padding: 8px 16px; border-radius: 100px;
+            border: 1px solid var(--border);
+        }
+        .user-avatar {
+            width: 32px; height: 32px; background: #e2e8f0; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center; color: var(--text-muted);
+        }
+
+        .header-section h1 { font-size: 28px; font-weight: 700; margin-bottom: 8px; }
+        .header-section p { color: var(--text-muted); font-size: 15px; }
+
+        /* ── Grid & Cards ── */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+            margin-top: 32px;
+        }
+
+        .card {
+            background: var(--bg-card);
+            border-radius: 20px;
+            padding: 24px;
+            border: 1px solid var(--border);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+            transition: transform 0.2s;
+        }
+        .card:hover { transform: translateY(-2px); box-shadow: 0 10px 15px -3px rgba(0,0,0,0.05); }
+
+        .card-title { font-size: 14px; font-weight: 600; color: var(--text-muted); margin-bottom: 16px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .stat-val { font-size: 32px; font-weight: 800; color: var(--text-main); margin-bottom: 8px; }
+        .stat-desc { font-size: 13px; color: var(--text-muted); }
+
+        .progress-container { height: 8px; background: #f1f5f9; border-radius: 10px; margin-top: 16px; overflow: hidden; }
+        .progress-bar { height: 100%; background: var(--primary); border-radius: 10px; transition: width 1s ease; }
+
+        .wide-card { grid-column: span 2; }
+
+        /* ── API Key Box ── */
+        .api-key-container {
+            margin-top: 24px;
+            background: #f8fafc;
+            border: 1px dashed var(--border);
+            border-radius: 16px;
+            padding: 20px;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .key-val { font-family: 'SF Mono', monospace; font-size: 14px; color: var(--text-main); font-weight: 600; }
+        .btn-copy {
+            background: var(--primary); color: #fff; border: none; padding: 8px 16px;
+            border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer;
+            display: flex; align-items: center; gap: 8px; transition: 0.2s;
+        }
+        .btn-copy:hover { background: var(--primary-light); }
+
+        /* ── Mobile Menu ── */
+        .mobile-header {
+            display: none;
+            padding: 16px 24px;
+            background: #fff;
+            border-bottom: 1px solid var(--border);
+            position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+            justify-content: space-between; align-items: center;
+        }
+        .menu-toggle { background: none; border: none; font-size: 24px; cursor: pointer; color: var(--text-main); }
+
+        /* ── Tab Content ── */
+        .tab-content { display: none; animation: fadeIn 0.3s ease; }
+        .tab-content.active { display: block; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* ── Responsive ── */
+        @media (max-width: 1024px) {
+            .dashboard-grid { grid-template-columns: 1fr; }
+            .wide-card { grid-column: span 1; }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar { transform: translateX(-100%); }
+            .sidebar.open { transform: translateX(0); }
+            .main-content { margin-left: 0; padding: 100px 20px 40px; width: 100%; }
+            .mobile-header { display: flex; }
+            .top-bar { display: none; }
+        }
+
+        .settings-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 24px; }
+        .settings-card { padding: 24px; }
+        .settings-card h3 { font-size: 18px; margin-bottom: 12px; }
+        .settings-card p { color: var(--text-muted); font-size: 14px; margin-bottom: 20px; line-height: 1.5; }
+        .btn-outline {
+            padding: 10px 20px; border: 1px solid var(--border); background: #fff;
+            border-radius: 10px; font-weight: 600; cursor: pointer; transition: 0.2s;
+        }
+        .btn-outline:hover { background: #f8fafc; border-color: var(--primary); color: var(--primary); }
     </style>
-    <script>
-        if (!localStorage.getItem('wiazart_token')) window.location.href = '/login';
-    </script>
 </head>
 <body>
-    <nav class="glass-panel">
+    <header class="mobile-header">
         <div class="logo-area">
-            <img src="/logo.png" alt="Wiazart" class="logo-img">
+            <div class="logo-box"><i data-lucide="zap"></i></div>
             <span class="logo-text">Wiazart</span>
         </div>
-        <div class="user-area">
-            <span id="userEmail" style="font-weight: 500;"></span>
-            <span class="badge" id="planBadge">...</span>
-            <a class="logout" onclick="localStorage.clear(); window.location.href='/login'">Log out</a>
-        </div>
-    </nav>
+        <button class="menu-toggle" onclick="toggleMenu()"><i data-lucide="menu"></i></button>
+    </header>
 
-    <div class="container">
-        <div class="welcome-section">
-            <h1>Workspace</h1>
-            <p>Manage your magic keys and monitor your AI throughput.</p>
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="logo-box"><i data-lucide="zap"></i></div>
+            <span class="logo-text">Wiazart</span>
         </div>
+        <ul class="nav-list">
+            <li class="nav-item">
+                <a href="#" class="nav-link active" onclick="showTab('dashboard', this)">
+                    <i data-lucide="layout-dashboard"></i> Dashboard
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link" onclick="showTab('billing', this)">
+                    <i data-lucide="credit-card"></i> Billing
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link" onclick="showTab('settings', this)">
+                    <i data-lucide="settings"></i> Settings
+                </a>
+            </li>
+        </ul>
+        <div class="sidebar-footer">
+            <a href="#" class="nav-link" style="color: #ef4444;" onclick="logout()">
+                <i data-lucide="log-out"></i> Logout
+            </a>
+        </div>
+    </aside>
 
-        <div class="grid">
-            <div class="card glass-panel">
-                <div class="card-label">Terminal API Key</div>
-                <p style="font-size: 15px; color: var(--text-muted); margin-bottom: 24px; line-height: 1.6; font-family: 'Inter', sans-serif;">
-                    Your unique identifier to unlock the full potential of the Wiazart Desktop environment. Keep it secret, keep it safe.
-                </p>
-                <div class="api-key-box">
-                    <span class="api-key-value" id="apiKey">••••••••••••••••••••••••</span>
-                    <button class="copy-btn" onclick="copyKey()">Copy Key</button>
-                </div>
-                
-                <div class="instructions">
-                    <h3>Connection Guide</h3>
-                    <ol>
-                        <li>Open the <strong>Wiazart Desktop App</strong></li>
-                        <li>Navigate to <strong>Settings → Provider → Auto</strong></li>
-                        <li>Paste your <strong>Master Key</strong> in the API Key field</li>
-                        <li>Verify that the <strong>Engine URL</strong> points to your server</li>
-                        <li>Click <strong>Save</strong> and start creating</li>
-                    </ol>
-                </div>
+    <main class="main-content">
+        <div class="top-bar">
+            <div class="header-section">
+                <h1 id="welcomeText">Welcome back!</h1>
+                <p>Monitor your AI ecosystem and usage.</p>
             </div>
-
-            <div class="stacked">
-                <div class="card glass-panel">
-                    <div class="card-label">Usage Status</div>
-                    <div class="stat-value" id="creditDisplay">0 / 0</div>
-                    <div class="stat-sub">AI credits consumed this month</div>
-                    <div class="progress-bg"><div class="progress-fill" id="creditBar" style="width: 0%"></div></div>
-                </div>
-                
-                <div class="card glass-panel">
-                    <div class="card-label">Membership Tier</div>
-                    <div class="stat-value" id="planName">—</div>
-                    <div class="stat-sub">Cycle resets on <strong id="renewDate" style="color: var(--text-main);">—</strong></div>
-                </div>
+            <div class="user-profile">
+                <div class="user-avatar"><i data-lucide="user"></i></div>
+                <span id="userEmail">Loading...</span>
             </div>
         </div>
-    </div>
+
+        <!-- ── Dashboard Tab ── -->
+        <div id="dashboard" class="tab-content active">
+            <div class="dashboard-grid">
+                <div class="card wide-card">
+                    <div class="card-title">Terminal API Key</div>
+                    <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 12px;">Use this key to authenticate your Wiazart Desktop App.</p>
+                    <div class="api-key-container">
+                        <span class="key-val" id="apiKey">••••••••••••••••••••••••</span>
+                        <button class="btn-copy" onclick="copyKey()">
+                            <i data-lucide="copy" style="width:16px;"></i> Copy
+                        </button>
+                    </div>
+                    <div style="margin-top: 32px; padding-top: 24px; border-top: 1px solid var(--border);">
+                        <h4 style="margin-bottom: 12px; font-size: 15px;">How to connect</h4>
+                        <ul style="list-style: none; font-size: 14px; color: var(--text-muted); line-height: 2;">
+                            <li><i data-lucide="check-circle" style="width:14px; color:var(--primary); vertical-align:middle; margin-right:8px;"></i> Open Wiazart Desktop App</li>
+                            <li><i data-lucide="check-circle" style="width:14px; color:var(--primary); vertical-align:middle; margin-right:8px;"></i> Go to Settings → Provider → Auto</li>
+                            <li><i data-lucide="check-circle" style="width:14px; color:var(--primary); vertical-align:middle; margin-right:8px;"></i> Paste your Master Key above</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="stacked">
+                    <div class="card">
+                        <div class="card-title">Usage Status</div>
+                        <div class="stat-val" id="creditDisplay">0 / 0</div>
+                        <div class="stat-desc">Credits consumed this cycle</div>
+                        <div class="progress-container"><div class="progress-bar" id="creditBar" style="width: 0%"></div></div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">Active Plan</div>
+                        <div class="stat-val" id="planName" style="color: var(--primary);">—</div>
+                        <div class="stat-desc" id="renewDate">Cycle resets soon</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ── Billing Tab ── -->
+        <div id="billing" class="tab-content">
+            <div class="header-section" style="margin-bottom: 32px;">
+                <h1>Billing & Plans</h1>
+                <p>Manage your subscription and invoices.</p>
+            </div>
+            <div class="card">
+                <h3>Subscription Details</h3>
+                <p style="margin: 16px 0; color: var(--text-muted);">Your current plan is managed by the Wiazart Admin team. For upgrades or plan changes, please contact support.</p>
+                <button class="btn-outline" onclick="window.location.href='/#pricing'">Upgrade Plan</button>
+            </div>
+        </div>
+
+        <!-- ── Settings Tab ── -->
+        <div id="settings" class="tab-content">
+            <div class="header-section" style="margin-bottom: 32px;">
+                <h1>Account Settings</h1>
+                <p>Configure your personal preferences.</p>
+            </div>
+            <div class="settings-grid">
+                <div class="card settings-card">
+                    <i data-lucide="shield-check" style="color: var(--primary); margin-bottom: 16px;"></i>
+                    <h3>Security</h3>
+                    <p>Change your password and manage two-factor authentication for your account.</p>
+                    <button class="btn-outline">Update Security</button>
+                </div>
+                <div class="card settings-card">
+                    <i data-lucide="bell" style="color: var(--primary); margin-bottom: 16px;"></i>
+                    <h3>Notifications</h3>
+                    <p>Configure how you want to receive alerts about your usage and credits.</p>
+                    <button class="btn-outline">Configure</button>
+                </div>
+            </div>
+        </div>
+    </main>
 
     <script>
+        // Initialize Lucide Icons
+        lucide.createIcons();
+
+        function toggleMenu() {
+            document.getElementById('sidebar').classList.toggle('open');
+        }
+
+        function showTab(tabId, el) {
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            el.classList.add('active');
+            if (window.innerWidth <= 768) toggleMenu();
+        }
+
         async function loadProfile() {
             try {
                 const token = localStorage.getItem('wiazart_token');
-                const res = await fetch('/api/user/profile', { 
+                const res = await fetch('/api/v2/profile/me', { 
                     headers: { Authorization: `Bearer ${token}` } 
                 });
                 
@@ -202,15 +350,12 @@
                 
                 const u = await res.json();
                 document.getElementById('userEmail').textContent = u.email;
-                document.getElementById('planBadge').textContent = (u.planId || 'FREE').toUpperCase();
-                document.getElementById('apiKey').textContent = u.apiKey;
-                document.getElementById('creditDisplay').textContent = `${u.usedCredits} / ${u.totalCredits}`;
-                document.getElementById('planName').textContent = u.planName || 'Free Tier';
-                document.getElementById('renewDate').textContent = new Date(u.resetDate).toLocaleDateString(undefined, {
-                    month: 'short', day: 'numeric', year: 'numeric'
-                });
+                document.getElementById('welcomeText').textContent = `Welcome, ${u.email.split('@')[0]}!`;
+                document.getElementById('apiKey').textContent = u.api_key;
+                document.getElementById('creditDisplay').textContent = `${u.used_credits} / ${u.total_credits}`;
+                document.getElementById('planName').textContent = (u.plan_id || 'Free').toUpperCase();
                 
-                const pct = u.totalCredits > 0 ? (u.usedCredits / u.totalCredits) * 100 : 0;
+                const pct = u.total_credits > 0 ? (u.used_credits / u.total_credits) * 100 : 0;
                 setTimeout(() => {
                     document.getElementById('creditBar').style.width = pct + '%';
                 }, 100);
@@ -222,15 +367,21 @@
         function copyKey() {
             const key = document.getElementById('apiKey').textContent;
             navigator.clipboard.writeText(key);
-            const btn = document.querySelector('.copy-btn');
-            const originalText = btn.textContent;
-            btn.textContent = 'Copied!';
-            btn.style.background = '#00ffff';
-            btn.style.color = '#000';
+            const btn = document.querySelector('.btn-copy');
+            const originalHtml = btn.innerHTML;
+            btn.innerHTML = '<i data-lucide="check" style="width:16px;"></i> Copied!';
+            lucide.createIcons();
+            btn.style.background = '#10b981';
             setTimeout(() => {
-                btn.textContent = originalText;
-                btn.style.background = '#fff';
+                btn.innerHTML = originalHtml;
+                lucide.createIcons();
+                btn.style.background = '';
             }, 2000);
+        }
+
+        function logout() {
+            localStorage.clear();
+            window.location.href = '/login';
         }
 
         loadProfile();

@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Control | Wiazart</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #0a0514;
+            --bg-card: rgba(255, 255, 255, 0.02);
+            --border-glass: rgba(255, 255, 255, 0.08);
+            --text-main: #f0f0f5;
+            --text-muted: #8c8c9e;
+            --accent-primary: #8a2be2;
+            --accent-secondary: #00ffff;
+            --accent-success: #10b981;
+            --accent-danger: #ef4444;
+        }
+
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body { 
+            font-family: 'Outfit', sans-serif; 
+            background: var(--bg-dark); 
+            color: var(--text-main);
+            min-height: 100vh;
+            background-image: 
+                radial-gradient(circle at 100% 0%, rgba(138, 43, 226, 0.05), transparent 40%),
+                radial-gradient(circle at 0% 100%, rgba(0, 255, 255, 0.05), transparent 40%);
+        }
+
+        .glass-panel {
+            background: var(--bg-card);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid var(--border-glass);
+            border-radius: 24px;
+        }
+
+        nav { 
+            max-width: 1200px; 
+            margin: 20px auto; 
+            padding: 16px 32px; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+        }
+        
+        .logo-area { display: flex; align-items: center; gap: 12px; }
+        .logo-text { font-size: 24px; font-weight: 800; background: linear-gradient(90deg, #fff, #b3b3ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .logo-text span { font-weight: 400; opacity: 0.5; font-size: 14px; letter-spacing: 2px; text-transform: uppercase; margin-left: 8px; }
+
+        .nav-actions { display: flex; gap: 16px; align-items: center; }
+        .logout { color: var(--text-muted); cursor: pointer; font-size: 14px; font-weight: 600; transition: color 0.2s; }
+        .logout:hover { color: var(--accent-danger); }
+
+        .container { max-width: 1200px; margin: 0 auto; padding: 20px 32px; }
+        
+        .section-header { margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center; }
+        .section-header h2 { font-size: 24px; font-weight: 700; color: #fff; }
+        .section-header p { color: var(--text-muted); font-size: 14px; margin-top: 4px; font-family: 'Inter', sans-serif; }
+
+        .card { padding: 32px; margin-bottom: 40px; position: relative; }
+        
+        .btn { 
+            padding: 10px 20px; border-radius: 12px; font-weight: 600; font-size: 14px; 
+            cursor: pointer; border: none; transition: all 0.3s ease; display: inline-flex; align-items: center; gap: 8px;
+        }
+        .btn-primary { 
+            background: linear-gradient(135deg, var(--accent-primary), #5a189a); 
+            color: #fff; 
+            box-shadow: 0 4px 15px rgba(138, 43, 226, 0.3);
+        }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(138, 43, 226, 0.5); }
+        
+        .btn-outline { background: rgba(255,255,255,0.05); border: 1px solid var(--border-glass); color: #fff; }
+        .btn-outline:hover { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.2); }
+        
+        .btn-danger { background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.2); color: var(--accent-danger); }
+        .btn-danger:hover { background: var(--accent-danger); color: #fff; }
+
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th { 
+            text-align: left; padding: 16px; font-size: 12px; font-weight: 700; 
+            color: var(--text-muted); text-transform: uppercase; letter-spacing: 1.5px; 
+            border-bottom: 1px solid var(--border-glass); 
+        }
+        td { 
+            padding: 20px 16px; border-bottom: 1px solid rgba(255,255,255,0.03); 
+            font-size: 14px; vertical-align: middle; font-family: 'Inter', sans-serif;
+        }
+        
+        .mono { 
+            font-family: 'SF Mono', monospace; font-size: 12px; color: var(--accent-secondary); 
+            background: rgba(0, 255, 255, 0.05); padding: 4px 10px; border-radius: 8px; 
+        }
+        
+        .badge { 
+            display: inline-flex; align-items: center; padding: 4px 12px; border-radius: 100px; 
+            font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px;
+        }
+        .badge-free { background: rgba(255,255,255,0.1); color: #aaa; }
+        .badge-pro { background: rgba(138, 43, 226, 0.15); color: #b3b3ff; border: 1px solid rgba(138, 43, 226, 0.3); }
+        .badge-max { background: rgba(0, 255, 255, 0.1); color: #00ffff; border: 1px solid rgba(0, 255, 255, 0.3); }
+
+        .active-dot { 
+            display: inline-block; width: 8px; height: 8px; background: var(--accent-success); 
+            border-radius: 50%; margin-right: 8px; box-shadow: 0 0 10px var(--accent-success);
+            animation: pulse 2s infinite;
+        }
+
+        /* Modal overlay */
+        .overlay { 
+            position: fixed; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(8px);
+            display: none; justify-content: center; align-items: center; z-index: 1000; 
+            animation: fadeIn 0.3s ease;
+        }
+        .modal { width: 440px; padding: 40px; }
+        .modal h2 { font-size: 22px; font-weight: 700; margin-bottom: 24px; color: #fff; }
+        
+        .field { margin-bottom: 20px; }
+        .field label { display: block; font-size: 13px; font-weight: 600; color: var(--text-muted); margin-bottom: 8px; padding-left: 4px;}
+        .field input, .field select { 
+            width: 100%; padding: 12px 16px; background: rgba(255,255,255,0.05); 
+            border: 1px solid var(--border-glass); border-radius: 12px; 
+            font-size: 15px; color: #fff; outline: none; transition: all 0.3s;
+        }
+        .field input:focus, .field select:focus { border-color: var(--accent-primary); background: rgba(255,255,255,0.08); }
+        
+        .modal-actions { display: flex; gap: 12px; margin-top: 32px; }
+        .modal-actions .btn { flex: 1; justify-content: center; }
+
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.5); opacity: 0.5; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @media (max-width: 768px) {
+            .container { padding: 10px 16px; }
+            th:nth-child(3), td:nth-child(3), th:nth-child(5), td:nth-child(5) { display: none; }
+        }
+    </style>
+    <script>
+        if (!localStorage.getItem('wiazart_token')) window.location.href = '/login';
+        const user = JSON.parse(localStorage.getItem('wiazart_user'));
+        if (!user?.isAdmin) window.location.href = '/dashboard';
+    </script>
+</head>
+<body>
+    <nav class="glass-panel">
+        <div class="logo-area">
+            <span class="logo-text">Wiazart <span>Admin</span></span>
+        </div>
+        <div class="nav-actions">
+            <a href="/" class="btn btn-outline">Portal View</a>
+            <a class="logout" onclick="localStorage.clear(); window.location.href='/login'">Sign Out</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <!-- AI Providers -->
+        <div class="section-header">
+            <div>
+                <h2>AI Nodes</h2>
+                <p>Global routing configuration for all terminal requests.</p>
+            </div>
+            <button class="btn btn-primary" onclick="openProviderModal()">+ Register Node</button>
+        </div>
+        
+        <div class="card glass-panel">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Node</th>
+                        <th>Endpoint</th>
+                        <th>Mapping</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="providerList"></tbody>
+            </table>
+        </div>
+
+        <!-- Users -->
+        <div class="section-header">
+            <div>
+                <h2>Terminal Users</h2>
+                <p>Manage access keys and credit allocations.</p>
+            </div>
+            <button class="btn btn-primary" onclick="openModal()">+ Provision User</button>
+        </div>
+
+        <div class="card glass-panel">
+            <table>
+                <thead>
+                    <tr>
+                        <th>User Identity</th>
+                        <th>Security Tier</th>
+                        <th>Throughput</th>
+                        <th>Last Sync</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="userList"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Modals -->
+    <div class="overlay" id="modal">
+        <div class="modal glass-panel">
+            <h2 id="userModalTitle">Provision User</h2>
+            <input type="hidden" id="editUserId">
+            <div class="field"><label>Email Address</label><input type="email" id="newEmail" placeholder="user@wiazart.com"></div>
+            <div class="field"><label>Password</label><input type="password" id="newPass" value="wiazart123"></div>
+            <div class="field">
+                <label>Security Tier</label>
+                <select id="newPlan">
+                    <option value="free">Free Tier</option>
+                    <option value="pro" selected>Professional</option>
+                    <option value="max">Enterprise Max</option>
+                </select>
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-outline" onclick="closeModal()">Abort</button>
+                <button class="btn btn-primary" onclick="saveUser()">Confirm Provision</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="overlay" id="providerModal">
+        <div class="modal glass-panel">
+            <h2 id="provModalTitle">Register AI Node</h2>
+            <input type="hidden" id="editProvId">
+            <div class="field"><label>Node Name</label><input type="text" id="provName" placeholder="e.g. MiniMax-Alpha"></div>
+            <div class="field"><label>Endpoint URL</label><input type="text" id="provUrl" placeholder="https://api.node.io/v1"></div>
+            <div class="field"><label>Access Key</label><input type="text" id="provKey" placeholder="sk-..."></div>
+            <div class="field"><label>Model Override</label><input type="text" id="provModel" placeholder="e.g. gpt-4o"></div>
+            <div class="modal-actions">
+                <button class="btn btn-outline" onclick="closeProviderModal()">Abort</button>
+                <button class="btn btn-primary" onclick="saveProvider()">Activate Node</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        async function loadProviders() {
+            try {
+                const res = await fetch('/api/admin/providers');
+                const providers = await res.json();
+                const list = document.getElementById('providerList');
+                list.innerHTML = '';
+                providers.forEach(p => {
+                    const tr = document.createElement('tr');
+                    const statusHtml = p.is_active
+                        ? '<span style="color:var(--accent-success); font-weight:700;"><span class="active-dot"></span>ACTIVE</span>'
+                        : `<button class="btn btn-outline" style="font-size:11px;padding:4px 10px;" onclick="activateProvider(${p.id})">DEPLOY</button>`;
+                    tr.innerHTML = `
+                        <td style="font-weight:600; color:#fff;">${p.name}</td>
+                        <td><span class="mono">${p.base_url}</span></td>
+                        <td style="color:var(--text-muted); font-size:13px;">${p.model_name || 'default'}</td>
+                        <td>${statusHtml}</td>
+                        <td style="display:flex; gap:8px;">
+                            <button class="btn btn-outline" style="padding:6px 12px; font-size:11px;" onclick="openEditProvider(${JSON.stringify(p).replace(/"/g, '&quot;')})">EDIT</button>
+                            <button class="btn btn-danger" style="padding:6px 12px; font-size:11px;" onclick="deleteProvider(${p.id})">PURGE</button>
+                        </td>
+                    `;
+                    list.appendChild(tr);
+                });
+            } catch (err) { console.error(err); }
+        }
+
+        async function loadUsers() {
+            try {
+                const res = await fetch('/api/admin/users');
+                const users = await res.json();
+                const list = document.getElementById('userList');
+                list.innerHTML = '';
+                users.forEach(u => {
+                    const badgeClass = u.plan_id === 'max' ? 'badge-max' : u.plan_id === 'pro' ? 'badge-pro' : 'badge-free';
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>
+                            <div style="font-weight:600; color:#fff;">${u.email}</div>
+                            <div style="font-size:11px;color:var(--text-muted);">${u.api_key}</div>
+                        </td>
+                        <td><span class="badge ${badgeClass}">${u.plan_id}</span></td>
+                        <td style="font-weight:500;">${u.used_credits} / ${u.total_credits}</td>
+                        <td style="font-size:13px;color:var(--text-muted)">${new Date(u.created_at).toLocaleDateString()}</td>
+                        <td>${u.is_admin ? '<span style="color:var(--accent-secondary); font-size:11px; font-weight:800;">ROOT</span>' : `<button class="btn btn-danger" style="padding:6px 12px; font-size:11px;" onclick="deleteUser(${u.id})">REVOKE</button>`}</td>
+                    `;
+                    list.appendChild(tr);
+                });
+            } catch (err) { console.error(err); }
+        }
+
+        function openProviderModal() { 
+            document.getElementById('provModalTitle').innerText = 'Register AI Node';
+            document.getElementById('editProvId').value = '';
+            document.getElementById('provName').value = '';
+            document.getElementById('provUrl').value = '';
+            document.getElementById('provKey').value = '';
+            document.getElementById('provModel').value = '';
+            document.getElementById('providerModal').style.display = 'flex'; 
+        }
+
+        function openEditProvider(p) {
+            document.getElementById('provModalTitle').innerText = 'Edit AI Node';
+            document.getElementById('editProvId').value = p.id;
+            document.getElementById('provName').value = p.name;
+            document.getElementById('provUrl').value = p.base_url;
+            document.getElementById('provKey').value = p.api_key;
+            document.getElementById('provModel').value = p.model_name;
+            document.getElementById('providerModal').style.display = 'flex';
+        }
+
+        function closeProviderModal() { document.getElementById('providerModal').style.display = 'none'; }
+
+        async function saveProvider() {
+            const id = document.getElementById('editProvId').value;
+            const data = {
+                name: document.getElementById('provName').value,
+                baseUrl: document.getElementById('provUrl').value,
+                apiKey: document.getElementById('provKey').value,
+                modelName: document.getElementById('provModel').value,
+            };
+
+            const url = id ? `/api/admin/providers/${id}` : '/api/admin/providers';
+            const method = id ? 'PUT' : 'POST';
+
+            const res = await fetch(url, {
+                method,
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+
+            if (res.ok) { closeProviderModal(); loadProviders(); }
+            else { alert('Failed to save node'); }
+        }
+
+        async function activateProvider(id) {
+            await fetch(`/api/admin/providers/${id}/activate`, { method: 'POST' });
+            loadProviders();
+        }
+
+        async function deleteProvider(id) {
+            if (!confirm('Purge this node?')) return;
+            await fetch(`/api/admin/providers/${id}`, { method: 'DELETE' });
+            loadProviders();
+        }
+
+        async function createUser() {
+            const res = await fetch('/api/admin/users', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    email: document.getElementById('newEmail').value,
+                    password: document.getElementById('newPass').value,
+                    planId: document.getElementById('newPlan').value
+                })
+            });
+            if (res.ok) { closeModal(); loadUsers(); }
+            else { alert('Failed to provision user'); }
+        }
+
+        async function deleteUser(id) {
+            if (!confirm('Revoke access for this user?')) return;
+            await fetch(`/api/admin/users/${id}`, { method: 'DELETE' });
+            loadUsers();
+        }
+
+        loadProviders();
+        loadUsers();
+    </script>
+</body>
+</html>

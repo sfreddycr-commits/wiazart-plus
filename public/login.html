@@ -7,22 +7,23 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
     <style>
         :root {
-            --bg-dark: #0a0514;
-            --bg-card: rgba(255, 255, 255, 0.03);
-            --border-glass: rgba(255, 255, 255, 0.08);
-            --text-main: #f0f0f5;
-            --text-muted: #8c8c9e;
-            --accent-primary: #8a2be2;
-            --accent-secondary: #00ffff;
+            --primary: #6d28d9;
+            --primary-light: #8b5cf6;
+            --bg-body: #f8fafc;
+            --bg-card: #ffffff;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
         }
 
-        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         
         body { 
-            font-family: 'Outfit', sans-serif; 
-            background: var(--bg-dark); 
+            font-family: 'Inter', sans-serif; 
+            background: var(--bg-body); 
             color: var(--text-main);
             height: 100vh; 
             display: flex; 
@@ -30,166 +31,72 @@
             align-items: center; 
             overflow: hidden;
             background-image: 
-                radial-gradient(circle at 10% 20%, rgba(138, 43, 226, 0.1), transparent 30%),
-                radial-gradient(circle at 90% 80%, rgba(0, 255, 255, 0.05), transparent 30%);
+                radial-gradient(circle at 0% 0%, rgba(109, 40, 217, 0.03), transparent 40%),
+                radial-gradient(circle at 100% 100%, rgba(14, 165, 233, 0.03), transparent 40%);
         }
 
-        /* ── Glassmorphism Card ── */
         .login-box { 
-            background: rgba(255, 255, 255, 0.02); 
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
+            background: #fff; 
             padding: 48px; 
             border-radius: 32px; 
             width: 440px; 
-            border: 1px solid var(--border-glass); 
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-            animation: fadeIn 0.8s ease-out;
+            border: 1px solid var(--border); 
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            animation: fadeIn 0.6s ease-out;
             position: relative;
         }
 
-        .login-box::before {
-            content: '';
-            position: absolute;
-            top: -2px; left: -2px; right: -2px; bottom: -2px;
-            background: linear-gradient(135deg, var(--accent-primary), transparent, var(--accent-secondary));
-            z-index: -1;
-            border-radius: 34px;
-            opacity: 0.15;
-        }
-
-        .logo-container {
-            text-align: center;
-            margin-bottom: 40px;
-        }
-
-        .logo-img {
-            width: 80px;
-            height: 80px;
-            margin-bottom: 16px;
-            filter: drop-shadow(0 0 15px rgba(138,43,226,0.5));
+        .logo-container { text-align: center; margin-bottom: 40px; }
+        .logo-box {
+            width: 64px; height: 64px; background: var(--primary); border-radius: 18px;
+            display: flex; align-items: center; justify-content: center; color: #fff;
+            margin: 0 auto 16px; box-shadow: 0 8px 16px rgba(109, 40, 217, 0.2);
             animation: float 6s ease-in-out infinite;
         }
 
         .logo-text { 
-            font-size: 28px; 
-            font-weight: 800; 
-            letter-spacing: -1px;
-            background: linear-gradient(90deg, #fff, #b3b3ff);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            font-family: 'Outfit', sans-serif;
+            font-size: 28px; font-weight: 800; color: var(--text-main);
         }
 
-        .subtitle { 
-            text-align: center; 
-            color: var(--text-muted); 
-            font-size: 15px; 
-            margin-top: 4px;
-            font-family: 'Inter', sans-serif;
-        }
+        .subtitle { color: var(--text-muted); font-size: 15px; margin-top: 4px; }
 
         .field { margin-bottom: 24px; }
-        .field label { 
-            display: block; 
-            font-size: 14px; 
-            font-weight: 600; 
-            color: var(--text-main); 
-            margin-bottom: 8px; 
-            padding-left: 4px;
-        }
-        
+        .field label { display: block; font-size: 14px; font-weight: 600; color: var(--text-main); margin-bottom: 8px; }
         .field input { 
-            width: 100%; 
-            padding: 14px 18px; 
-            background: rgba(255,255,255,0.05);
-            border: 1px solid var(--border-glass); 
-            border-radius: 14px; 
-            font-size: 16px; 
-            color: #fff;
-            outline: none; 
-            transition: all 0.3s ease;
-            font-family: 'Inter', sans-serif;
+            width: 100%; padding: 14px 18px; background: #f8fafc; border: 1px solid var(--border); 
+            border-radius: 14px; font-size: 16px; outline: none; transition: 0.3s;
         }
-        
-        .field input:focus { 
-            border-color: var(--accent-primary); 
-            background: rgba(255,255,255,0.08);
-            box-shadow: 0 0 15px rgba(138,43,226,0.2);
-        }
+        .field input:focus { border-color: var(--primary); background: #fff; box-shadow: 0 0 0 4px rgba(109, 40, 217, 0.1); }
 
         .btn { 
-            width: 100%; 
-            padding: 16px; 
-            background: linear-gradient(135deg, var(--accent-primary), #5a189a); 
-            color: #fff; 
-            border: none; 
-            border-radius: 14px; 
-            font-weight: 700; 
-            font-size: 16px; 
-            cursor: pointer; 
-            transition: all 0.3s ease; 
-            margin-top: 8px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+            width: 100%; padding: 16px; background: var(--primary); color: #fff; border: none; 
+            border-radius: 14px; font-weight: 700; font-size: 16px; cursor: pointer; transition: 0.3s; margin-top: 8px;
         }
-        
-        .btn:hover { 
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(138, 43, 226, 0.4);
-            filter: brightness(1.1);
-        }
-        
-        .btn:active { transform: translateY(0); }
+        .btn:hover { transform: translateY(-2px); box-shadow: 0 10px 15px rgba(109, 40, 217, 0.3); background: var(--primary-light); }
+        .btn:disabled { opacity: 0.7; cursor: not-allowed; transform: none; }
 
         .error { 
-            background: rgba(220, 38, 38, 0.1); 
-            color: #ff8080; 
-            border: 1px solid rgba(220, 38, 38, 0.2); 
-            padding: 12px 16px; 
-            border-radius: 12px; 
-            font-size: 14px; 
-            margin-bottom: 24px; 
-            display: none; 
-            text-align: center;
-            font-family: 'Inter', sans-serif;
+            background: #fef2f2; color: #ef4444; border: 1px solid #fee2e2; 
+            padding: 12px 16px; border-radius: 12px; font-size: 14px; margin-bottom: 24px; display: none; text-align: center;
         }
 
-        .links { 
-            text-align: center; 
-            margin-top: 32px; 
-            font-size: 14px; 
-            color: var(--text-muted); 
-            font-family: 'Inter', sans-serif;
-        }
-        .links a { 
-            color: var(--accent-secondary); 
-            font-weight: 600; 
-            transition: all 0.2s;
-        }
+        .links { text-align: center; margin-top: 32px; font-size: 14px; color: var(--text-muted); }
+        .links a { color: var(--primary); font-weight: 600; text-decoration: none; }
         .links a:hover { text-decoration: underline; }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes float { 0% { transform: translateY(0px); } 50% { transform: translateY(-10px); } 100% { transform: translateY(0px); } }
 
-        @keyframes float {
-            0% { transform: translateY(0px); }
-            50% { transform: translateY(-10px); }
-            100% { transform: translateY(0px); }
-        }
-
-        @media (max-width: 480px) {
-            .login-box { width: 90%; padding: 32px 24px; }
-        }
+        @media (max-width: 480px) { .login-box { width: 90%; padding: 32px 24px; } }
     </style>
 </head>
 <body>
     <div class="login-box">
         <div class="logo-container">
-            <img src="/logo.png" alt="Wiazart" class="logo-img">
+            <div class="logo-box"><i data-lucide="zap"></i></div>
             <div class="logo-text">Wiazart</div>
-            <div class="subtitle">Enter the realm of creation</div>
+            <div class="subtitle">Access your terminal interface</div>
         </div>
 
         <div id="error" class="error"></div>
@@ -203,13 +110,15 @@
                 <label>Master Password</label>
                 <input type="password" id="password" placeholder="••••••••" required>
             </div>
-            <button type="submit" class="btn">Access Terminal</button>
+            <button type="submit" class="btn">Sign In</button>
         </form>
         
         <div class="links">New to Wiazart? <a href="/#pricing">Pick a Plan</a></div>
     </div>
 
     <script>
+        lucide.createIcons();
+
         document.getElementById('loginForm').onsubmit = async (e) => {
             e.preventDefault();
             const errDiv = document.getElementById('error');
@@ -235,7 +144,6 @@
                     localStorage.setItem('wiazart_token', data.token);
                     localStorage.setItem('wiazart_user', JSON.stringify(data.user));
                     
-                    // Smooth transition
                     document.querySelector('.login-box').style.opacity = '0';
                     document.querySelector('.login-box').style.transform = 'translateY(-20px)';
                     document.querySelector('.login-box').style.transition = 'all 0.5s ease';
@@ -246,13 +154,13 @@
                 } else {
                     errDiv.textContent = data.error || 'Authentication failed';
                     errDiv.style.display = 'block';
-                    btn.textContent = 'Access Terminal';
+                    btn.textContent = 'Sign In';
                     btn.disabled = false;
                 }
             } catch (err) {
                 errDiv.textContent = 'Connection error. Is the gateway online?';
                 errDiv.style.display = 'block';
-                btn.textContent = 'Access Terminal';
+                btn.textContent = 'Sign In';
                 btn.disabled = false;
             }
         };

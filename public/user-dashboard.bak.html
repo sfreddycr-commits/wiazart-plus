@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard | Wiazart</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #0a0514;
+            --bg-card: rgba(255, 255, 255, 0.02);
+            --border-glass: rgba(255, 255, 255, 0.08);
+            --text-main: #f0f0f5;
+            --text-muted: #8c8c9e;
+            --accent-primary: #8a2be2;
+            --accent-secondary: #00ffff;
+        }
+
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body { 
+            font-family: 'Outfit', sans-serif; 
+            background: var(--bg-dark); 
+            color: var(--text-main);
+            min-height: 100vh;
+            background-image: 
+                radial-gradient(circle at 0% 0%, rgba(138, 43, 226, 0.05), transparent 40%),
+                radial-gradient(circle at 100% 100%, rgba(0, 255, 255, 0.05), transparent 40%);
+        }
+
+        .glass-panel {
+            background: var(--bg-card);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--border-glass);
+            border-radius: 24px;
+        }
+
+        nav { 
+            max-width: 1100px; 
+            margin: 20px auto; 
+            padding: 16px 32px; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+        }
+        
+        .logo-area { display: flex; align-items: center; gap: 12px; }
+        .logo-img { width: 32px; height: 32px; filter: drop-shadow(0 0 10px rgba(138,43,226,0.5)); }
+        .logo-text { font-size: 22px; font-weight: 800; background: linear-gradient(90deg, #fff, #b3b3ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+
+        .user-area { display: flex; align-items: center; gap: 20px; font-size: 14px; }
+        .badge { 
+            background: linear-gradient(135deg, var(--accent-primary), #5a189a); 
+            padding: 6px 16px; 
+            border-radius: 100px; 
+            font-size: 11px; 
+            font-weight: 800; 
+            letter-spacing: 1px;
+            color: #fff;
+            box-shadow: 0 4px 12px rgba(138, 43, 226, 0.3);
+        }
+        .logout { color: var(--text-muted); cursor: pointer; font-weight: 600; transition: color 0.2s; }
+        .logout:hover { color: #fff; }
+
+        .container { max-width: 1100px; margin: 0 auto; padding: 20px 32px; }
+        
+        .welcome-section { margin-bottom: 40px; }
+        .welcome-section h1 { font-size: 32px; font-weight: 700; margin-bottom: 8px; }
+        .welcome-section p { color: var(--text-muted); font-family: 'Inter', sans-serif; }
+
+        .grid { display: grid; grid-template-columns: 1.8fr 1fr; gap: 32px; }
+        
+        .card { padding: 40px; position: relative; overflow: hidden; }
+        .card-label { 
+            font-size: 12px; font-weight: 700; color: var(--accent-secondary); 
+            text-transform: uppercase; letter-spacing: 2px; margin-bottom: 24px; 
+        }
+
+        .api-key-box { 
+            background: rgba(255,255,255,0.03); 
+            border: 1px solid var(--border-glass); 
+            border-radius: 16px; 
+            padding: 20px; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            margin-bottom: 32px; 
+            transition: all 0.3s ease;
+        }
+        .api-key-box:hover { background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.15); }
+        .api-key-value { font-family: 'SF Mono', monospace; font-size: 15px; color: #fff; word-break: break-all; opacity: 0.9; }
+        
+        .copy-btn { 
+            background: #fff; color: #000; padding: 8px 18px; border: none;
+            border-radius: 10px; font-size: 13px; font-weight: 700; cursor: pointer; 
+            transition: all 0.2s;
+        }
+        .copy-btn:hover { transform: scale(1.05); background: #eee; }
+
+        .instructions { margin-top: 32px; border-top: 1px solid var(--border-glass); padding-top: 24px; }
+        .instructions h3 { font-size: 18px; font-weight: 700; margin-bottom: 16px; color: #fff; }
+        .instructions ol { padding-left: 20px; color: var(--text-muted); font-size: 15px; line-height: 2.2; font-family: 'Inter', sans-serif;}
+        .instructions strong { color: var(--text-main); }
+
+        .stat-value { font-size: 42px; font-weight: 800; letter-spacing: -1px; margin: 8px 0; color: #fff; }
+        .stat-sub { font-size: 14px; color: var(--text-muted); font-family: 'Inter', sans-serif; }
+        
+        .progress-bg { height: 10px; background: rgba(255,255,255,0.05); border-radius: 10px; margin-top: 20px; overflow: hidden; }
+        .progress-fill { 
+            height: 100%; 
+            background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary)); 
+            border-radius: 10px; 
+            transition: width 1s cubic-bezier(0.16, 1, 0.3, 1); 
+            box-shadow: 0 0 15px rgba(138, 43, 226, 0.4);
+        }
+
+        .stacked { display: flex; flex-direction: column; gap: 32px; }
+
+        @media (max-width: 900px) {
+            .grid { grid-template-columns: 1fr; }
+        }
+    </style>
+    <script>
+        if (!localStorage.getItem('wiazart_token')) window.location.href = '/login';
+    </script>
+</head>
+<body>
+    <nav class="glass-panel">
+        <div class="logo-area">
+            <img src="/logo.png" alt="Wiazart" class="logo-img">
+            <span class="logo-text">Wiazart</span>
+        </div>
+        <div class="user-area">
+            <span id="userEmail" style="font-weight: 500;"></span>
+            <span class="badge" id="planBadge">...</span>
+            <a class="logout" onclick="localStorage.clear(); window.location.href='/login'">Log out</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="welcome-section">
+            <h1>Workspace</h1>
+            <p>Manage your magic keys and monitor your AI throughput.</p>
+        </div>
+
+        <div class="grid">
+            <div class="card glass-panel">
+                <div class="card-label">Terminal API Key</div>
+                <p style="font-size: 15px; color: var(--text-muted); margin-bottom: 24px; line-height: 1.6; font-family: 'Inter', sans-serif;">
+                    Your unique identifier to unlock the full potential of the Wiazart Desktop environment. Keep it secret, keep it safe.
+                </p>
+                <div class="api-key-box">
+                    <span class="api-key-value" id="apiKey">••••••••••••••••••••••••</span>
+                    <button class="copy-btn" onclick="copyKey()">Copy Key</button>
+                </div>
+                
+                <div class="instructions">
+                    <h3>Connection Guide</h3>
+                    <ol>
+                        <li>Open the <strong>Wiazart Desktop App</strong></li>
+                        <li>Navigate to <strong>Settings → Provider → Auto</strong></li>
+                        <li>Paste your <strong>Master Key</strong> in the API Key field</li>
+                        <li>Verify that the <strong>Engine URL</strong> points to your server</li>
+                        <li>Click <strong>Save</strong> and start creating</li>
+                    </ol>
+                </div>
+            </div>
+
+            <div class="stacked">
+                <div class="card glass-panel">
+                    <div class="card-label">Usage Status</div>
+                    <div class="stat-value" id="creditDisplay">0 / 0</div>
+                    <div class="stat-sub">AI credits consumed this month</div>
+                    <div class="progress-bg"><div class="progress-fill" id="creditBar" style="width: 0%"></div></div>
+                </div>
+                
+                <div class="card glass-panel">
+                    <div class="card-label">Membership Tier</div>
+                    <div class="stat-value" id="planName">—</div>
+                    <div class="stat-sub">Cycle resets on <strong id="renewDate" style="color: var(--text-main);">—</strong></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        async function loadProfile() {
+            try {
+                const token = localStorage.getItem('wiazart_token');
+                const res = await fetch('/api/user/profile', { 
+                    headers: { Authorization: `Bearer ${token}` } 
+                });
+                
+                if (!res.ok) { 
+                    localStorage.clear(); 
+                    window.location.href = '/login'; 
+                    return; 
+                }
+                
+                const u = await res.json();
+                document.getElementById('userEmail').textContent = u.email;
+                document.getElementById('planBadge').textContent = (u.planId || 'FREE').toUpperCase();
+                document.getElementById('apiKey').textContent = u.apiKey;
+                document.getElementById('creditDisplay').textContent = `${u.usedCredits} / ${u.totalCredits}`;
+                document.getElementById('planName').textContent = u.planName || 'Free Tier';
+                document.getElementById('renewDate').textContent = new Date(u.resetDate).toLocaleDateString(undefined, {
+                    month: 'short', day: 'numeric', year: 'numeric'
+                });
+                
+                const pct = u.totalCredits > 0 ? (u.usedCredits / u.totalCredits) * 100 : 0;
+                setTimeout(() => {
+                    document.getElementById('creditBar').style.width = pct + '%';
+                }, 100);
+            } catch (err) {
+                console.error("Dashboard error", err);
+            }
+        }
+
+        function copyKey() {
+            const key = document.getElementById('apiKey').textContent;
+            navigator.clipboard.writeText(key);
+            const btn = document.querySelector('.copy-btn');
+            const originalText = btn.textContent;
+            btn.textContent = 'Copied!';
+            btn.style.background = '#00ffff';
+            btn.style.color = '#000';
+            setTimeout(() => {
+                btn.textContent = originalText;
+                btn.style.background = '#fff';
+            }, 2000);
+        }
+
+        loadProfile();
+    </script>
+</body>
+</html>
