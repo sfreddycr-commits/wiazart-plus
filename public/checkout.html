@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Checkout | Dyad</title>
+    <title>Checkout | Wiazart</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
@@ -35,7 +35,7 @@
         <div class="plan-summary">
             <div class="label">You're subscribing to</div>
             <div class="plan-row">
-                <div class="plan-name" id="planName">Dyad Pro</div>
+                <div class="plan-name" id="planName">Wiazart Pro</div>
                 <div class="plan-price" id="planPrice">$20<span>/mo</span></div>
             </div>
             <ul class="plan-features" id="planFeatures"></ul>
@@ -85,8 +85,8 @@
             });
             const data = await res.json();
             if (res.ok) {
-                localStorage.setItem('dyad_token', data.token);
-                localStorage.setItem('dyad_user', JSON.stringify(data.user));
+                localStorage.setItem('wiazart_token', data.token);
+                localStorage.setItem('wiazart_user', JSON.stringify(data.user));
                 window.location.href = '/dashboard';
             } else {
                 errDiv.textContent = data.error;

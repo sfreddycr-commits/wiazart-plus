@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard | Dyad</title>
+    <title>Dashboard | Wiazart</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
@@ -32,12 +32,12 @@
         .stacked { display: flex; flex-direction: column; gap: 24px; }
     </style>
     <script>
-        if (!localStorage.getItem('dyad_token')) window.location.href = '/login';
+        if (!localStorage.getItem('wiazart_token')) window.location.href = '/login';
     </script>
 </head>
 <body>
     <nav>
-        <a href="/" class="logo">dyad</a>
+        <a href="/" class="logo">wiazart</a>
         <div class="user-area">
             <span id="userEmail"></span>
             <span class="badge" id="planBadge">FREE</span>
@@ -49,7 +49,7 @@
         <div class="grid">
             <div class="card">
                 <div class="card-label">Your API Key</div>
-                <p style="font-size: 14px; color: #666; margin-bottom: 16px;">Use this key in your Dyad Desktop App settings to unlock Pro features.</p>
+                <p style="font-size: 14px; color: #666; margin-bottom: 16px;">Use this key in your Wiazart Desktop App settings to unlock Pro features.</p>
                 <div class="api-key-box">
                     <span class="api-key-value" id="apiKey">Loading...</span>
                     <button class="copy-btn" onclick="copyKey()">Copy</button>
@@ -57,7 +57,7 @@
                 <div class="instructions">
                     <h3>How to connect</h3>
                     <ol>
-                        <li>Open Dyad Desktop App</li>
+                        <li>Open Wiazart Desktop App</li>
                         <li>Go to <strong>Settings → Provider → Auto</strong></li>
                         <li>Paste your API key above</li>
                         <li>Set the Base URL to your dashboard server URL</li>
@@ -83,7 +83,7 @@
 
     <script>
         async function loadProfile() {
-            const token = localStorage.getItem('dyad_token');
+            const token = localStorage.getItem('wiazart_token');
             const res = await fetch('/api/user/profile', { headers: { Authorization: `Bearer ${token}` } });
             if (!res.ok) { localStorage.clear(); window.location.href = '/login'; return; }
             const u = await res.json();

@@ -3,223 +3,404 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dyad | Flexible, local, open-source AI app builder</title>
+    <title>Wiazart | Fullstack AI Webapps</title>
     <meta name="description" content="Use your favorite AI models and tools to build AI apps locally. Zero lock-in.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --bg-dark: #0a0514;
+            --bg-card: rgba(255, 255, 255, 0.03);
+            --border-glass: rgba(255, 255, 255, 0.08);
+            --text-main: #f0f0f5;
+            --text-muted: #8c8c9e;
+            --accent-primary: #8a2be2; /* BlueViolet */
+            --accent-secondary: #00ffff; /* Cyan */
+        }
+
         *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Inter', -apple-system, sans-serif; color: #1a1a1a; background: #fff; -webkit-font-smoothing: antialiased; }
+        
+        body { 
+            font-family: 'Outfit', -apple-system, sans-serif; 
+            color: var(--text-main); 
+            background: var(--bg-dark); 
+            -webkit-font-smoothing: antialiased; 
+            overflow-x: hidden;
+            background-image: 
+                radial-gradient(circle at 15% 50%, rgba(138, 43, 226, 0.15), transparent 25%),
+                radial-gradient(circle at 85% 30%, rgba(0, 255, 255, 0.1), transparent 25%);
+            background-attachment: fixed;
+        }
+        
         a { text-decoration: none; color: inherit; }
 
+        /* ── Glassmorphism Utilities ── */
+        .glass-panel {
+            background: var(--bg-card);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--border-glass);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+            border-radius: 24px;
+        }
+
         /* ── Nav ── */
-        nav { max-width: 1200px; margin: 0 auto; padding: 20px 24px; display: flex; justify-content: space-between; align-items: center; }
-        .logo { font-size: 22px; font-weight: 800; letter-spacing: -0.5px; }
-        .nav-links { display: flex; gap: 28px; align-items: center; list-style: none; }
-        .nav-links a { font-size: 15px; font-weight: 500; color: #555; transition: color .2s; }
-        .nav-links a:hover { color: #000; }
-        .nav-cta { background: #1a1a1a; color: #fff !important; padding: 8px 18px; border-radius: 8px; font-size: 14px; font-weight: 600; transition: background .2s; }
-        .nav-cta:hover { background: #333; }
+        nav { 
+            max-width: 1200px; 
+            margin: 24px auto; 
+            padding: 16px 32px; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            position: sticky;
+            top: 24px;
+            z-index: 100;
+            border-radius: 100px;
+            background: rgba(10, 5, 20, 0.6);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border-glass);
+            animation: slideDown 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .logo-img {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            object-fit: contain;
+        }
+
+        .logo-text { 
+            font-size: 24px; 
+            font-weight: 800; 
+            letter-spacing: -0.5px;
+            background: linear-gradient(90deg, #fff, #b3b3ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav-links { display: flex; gap: 32px; align-items: center; list-style: none; }
+        .nav-links a { font-size: 15px; font-weight: 500; color: var(--text-muted); transition: all .3s ease; }
+        .nav-links a:hover { color: #fff; text-shadow: 0 0 10px rgba(255,255,255,0.3); }
+        
+        .nav-cta { 
+            background: linear-gradient(135deg, var(--accent-primary), #5a189a); 
+            color: #fff !important; 
+            padding: 10px 24px; 
+            border-radius: 100px; 
+            font-size: 15px; 
+            font-weight: 600; 
+            transition: all .3s ease; 
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .nav-cta:hover { 
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(138, 43, 226, 0.4);
+        }
 
         /* ── Hero ── */
-        .hero { max-width: 800px; margin: 80px auto 0; text-align: center; padding: 0 24px; }
-        .hero h1 { font-size: 56px; font-weight: 800; letter-spacing: -2px; line-height: 1.1; margin-bottom: 20px; }
-        .hero p { font-size: 19px; color: #666; max-width: 520px; margin: 0 auto 36px; line-height: 1.6; }
-        .hero-buttons { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
-        .btn { display: inline-flex; align-items: center; gap: 8px; padding: 13px 24px; border-radius: 10px; font-weight: 600; font-size: 15px; border: none; cursor: pointer; transition: all .2s; }
-        .btn-dark { background: #1a1a1a; color: #fff; }
-        .btn-dark:hover { background: #333; transform: translateY(-1px); }
-        .btn-outline { background: #fff; color: #1a1a1a; border: 1px solid #e0e0e0; }
-        .btn-outline:hover { border-color: #999; }
+        .hero { 
+            max-width: 900px; 
+            margin: 100px auto 60px; 
+            text-align: center; 
+            padding: 0 24px; 
+            animation: fadeIn 1s ease-out;
+            position: relative;
+        }
+        
+        .hero-img {
+            width: 140px;
+            height: 140px;
+            margin: 0 auto 30px;
+            display: block;
+            animation: float 6s ease-in-out infinite;
+            filter: drop-shadow(0 0 30px rgba(138,43,226,0.6));
+        }
 
-        /* ── Section ── */
+        .hero h1 { 
+            font-size: 64px; 
+            font-weight: 800; 
+            letter-spacing: -2px; 
+            line-height: 1.1; 
+            margin-bottom: 24px; 
+            background: linear-gradient(135deg, #ffffff 0%, #a5b4fc 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .hero p { 
+            font-family: 'Inter', sans-serif;
+            font-size: 20px; 
+            color: var(--text-muted); 
+            max-width: 600px; 
+            margin: 0 auto 40px; 
+            line-height: 1.6; 
+        }
+
+        .hero-buttons { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+        
+        .btn { 
+            display: inline-flex; align-items: center; justify-content: center; gap: 8px; 
+            padding: 16px 32px; border-radius: 100px; font-weight: 600; font-size: 16px; 
+            border: none; cursor: pointer; transition: all .3s cubic-bezier(0.16, 1, 0.3, 1); 
+        }
+        
+        .btn-primary { 
+            background: linear-gradient(135deg, #00ffff, #0088ff); 
+            color: #000; 
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
+        }
+        .btn-primary:hover { 
+            transform: translateY(-2px); 
+            box-shadow: 0 8px 30px rgba(0, 255, 255, 0.5);
+        }
+        
+        .btn-outline { 
+            background: rgba(255,255,255,0.05); 
+            color: #fff; 
+            border: 1px solid var(--border-glass); 
+            backdrop-filter: blur(10px);
+        }
+        .btn-outline:hover { 
+            background: rgba(255,255,255,0.1); 
+            border-color: rgba(255,255,255,0.2);
+            transform: translateY(-2px);
+        }
+
+        /* ── Sections ── */
         section { max-width: 1200px; margin: 0 auto; padding: 100px 24px; }
-        .section-label { font-size: 14px; font-weight: 600; color: #888; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; }
-        .section-title { font-size: 36px; font-weight: 800; letter-spacing: -1px; margin-bottom: 16px; }
-        .section-subtitle { font-size: 18px; color: #666; max-width: 600px; line-height: 1.6; }
+        .section-label { 
+            font-size: 14px; font-weight: 700; color: var(--accent-secondary); 
+            text-transform: uppercase; letter-spacing: 2px; margin-bottom: 16px; 
+            text-align: center;
+        }
+        .section-title { 
+            font-size: 42px; font-weight: 800; letter-spacing: -1px; margin-bottom: 20px; 
+            text-align: center;
+        }
+        .section-subtitle { 
+            font-family: 'Inter', sans-serif;
+            font-size: 18px; color: var(--text-muted); max-width: 600px; line-height: 1.6; 
+            margin: 0 auto; text-align: center;
+        }
 
         /* ── Features Grid ── */
-        .features-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-top: 48px; }
-        .feature-card { padding: 32px; border: 1px solid #eee; border-radius: 16px; transition: border-color .2s; }
-        .feature-card:hover { border-color: #ccc; }
-        .feature-card h3 { font-size: 18px; font-weight: 700; margin-bottom: 10px; }
-        .feature-card p { font-size: 15px; color: #666; line-height: 1.6; }
+        .features-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-top: 60px; }
+        
+        .feature-card { 
+            padding: 40px 32px; 
+            transition: transform 0.3s ease, border-color 0.3s ease; 
+        }
+        .feature-card:hover { 
+            transform: translateY(-5px);
+            border-color: rgba(255,255,255,0.2);
+        }
+        .feature-card h3 { font-size: 20px; font-weight: 700; margin-bottom: 12px; color: #fff;}
+        .feature-card p { font-family: 'Inter', sans-serif; font-size: 15px; color: var(--text-muted); line-height: 1.6; }
 
         /* ── Pricing ── */
-        #pricing { background: #fafafa; border-radius: 32px; margin: 80px auto; max-width: 1200px; }
-        .pricing-header { text-align: center; margin-bottom: 48px; }
-        .pricing-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
-        .pricing-card { background: #fff; border: 1px solid #e5e5e5; border-radius: 20px; padding: 36px; display: flex; flex-direction: column; }
-        .pricing-card.featured { border: 2px solid #1a1a1a; position: relative; }
-        .pricing-card.featured::before {
-            content: 'Most Popular'; position: absolute; top: -13px; left: 50%; transform: translateX(-50%);
-            background: #1a1a1a; color: #fff; padding: 4px 16px; border-radius: 100px;
-            font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .5px;
+        #pricing { margin: 100px auto; max-width: 1200px; position: relative;}
+        
+        .pricing-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; margin-top: 60px;}
+        
+        .pricing-card { 
+            padding: 40px; display: flex; flex-direction: column; 
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
         }
-        .plan-name { font-size: 20px; font-weight: 700; margin-bottom: 8px; }
-        .plan-price { font-size: 48px; font-weight: 800; margin: 16px 0; letter-spacing: -2px; }
-        .plan-price span { font-size: 16px; font-weight: 500; color: #888; letter-spacing: 0; }
-        .plan-desc { font-size: 14px; color: #888; margin-bottom: 24px; }
-        .plan-features { list-style: none; margin-bottom: 32px; flex-grow: 1; }
-        .plan-features li { padding: 8px 0; font-size: 14px; color: #444; display: flex; align-items: flex-start; gap: 10px; }
-        .plan-features li::before { content: '✓'; font-weight: 800; color: #1a1a1a; flex-shrink: 0; }
-        .plan-btn { width: 100%; text-align: center; padding: 14px; border-radius: 10px; font-weight: 600; font-size: 15px; border: 1px solid #e0e0e0; background: #fff; color: #1a1a1a; cursor: pointer; transition: all .2s; }
-        .plan-btn:hover { background: #f5f5f5; }
-        .plan-btn-primary { background: #1a1a1a; color: #fff; border-color: #1a1a1a; }
-        .plan-btn-primary:hover { background: #333; }
+        .pricing-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .pricing-card.featured { 
+            border: 1px solid rgba(138, 43, 226, 0.5); 
+            box-shadow: 0 0 40px rgba(138, 43, 226, 0.15);
+            transform: scale(1.05);
+            z-index: 10;
+        }
+        .pricing-card.featured:hover { transform: scale(1.05) translateY(-5px); }
+        
+        .pricing-card.featured::before {
+            content: 'Most Popular'; position: absolute; top: 0; left: 0; right: 0;
+            background: linear-gradient(90deg, var(--accent-primary), #ff00ff); 
+            color: #fff; padding: 6px 0; text-align: center;
+            font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;
+        }
+        
+        .plan-name { font-size: 22px; font-weight: 700; margin-bottom: 12px; margin-top: 10px;}
+        .plan-price { font-size: 56px; font-weight: 800; margin: 16px 0; letter-spacing: -2px; color: #fff;}
+        .plan-price span { font-size: 16px; font-weight: 500; color: var(--text-muted); letter-spacing: 0; }
+        
+        .plan-features { list-style: none; margin: 32px 0; flex-grow: 1; border-top: 1px solid var(--border-glass); padding-top: 24px;}
+        .plan-features li { 
+            font-family: 'Inter', sans-serif;
+            padding: 10px 0; font-size: 15px; color: var(--text-main); display: flex; align-items: flex-start; gap: 12px; 
+        }
+        .plan-features li::before { 
+            content: '✦'; color: var(--accent-secondary); flex-shrink: 0; font-size: 18px;
+        }
+        
+        .plan-btn { 
+            width: 100%; text-align: center; padding: 16px; border-radius: 12px; font-weight: 600; font-size: 16px; 
+            border: 1px solid var(--border-glass); background: rgba(255,255,255,0.05); color: #fff; cursor: pointer; transition: all .2s; 
+        }
+        .plan-btn:hover { background: rgba(255,255,255,0.1); }
+        .plan-btn-primary { background: var(--text-main); color: #000; border: none; }
+        .plan-btn-primary:hover { background: #fff; box-shadow: 0 0 20px rgba(255,255,255,0.3); }
 
-        /* ── Testimonials ── */
-        .testimonials-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; margin-top: 48px; }
-        .testimonial { padding: 28px; border: 1px solid #eee; border-radius: 16px; }
-        .testimonial p { font-size: 15px; color: #444; line-height: 1.7; font-style: italic; margin-bottom: 16px; }
-        .testimonial-author { font-size: 13px; font-weight: 600; color: #888; }
-
-        /* ── Quote ── */
-        .founder-quote { max-width: 700px; margin: 0 auto; text-align: center; padding: 80px 24px; }
-        .founder-quote blockquote { font-size: 20px; line-height: 1.7; color: #444; font-style: italic; margin-bottom: 24px; }
-        .founder-quote .author { font-weight: 700; }
-        .founder-quote .role { color: #888; font-size: 14px; }
+        /* ── Animations ── */
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-15px); }
+            100% { transform: translateY(0px); }
+        }
+        
+        @keyframes slideDown {
+            from { transform: translateY(-100%); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
 
         /* ── Footer ── */
-        footer { text-align: center; padding: 48px 24px; border-top: 1px solid #eee; font-size: 14px; color: #888; }
-        footer a { color: #555; margin: 0 12px; }
+        footer { 
+            text-align: center; padding: 60px 24px; border-top: 1px solid var(--border-glass); 
+            font-size: 15px; color: var(--text-muted); 
+            background: rgba(0,0,0,0.3);
+        }
+        footer a { color: var(--text-main); margin: 0 16px; transition: color 0.2s;}
+        footer a:hover { color: var(--accent-secondary); }
 
+        @media (max-width: 900px) {
+            .features-grid { grid-template-columns: repeat(2, 1fr); }
+            .pricing-grid { grid-template-columns: 1fr; }
+            .pricing-card.featured { transform: scale(1); }
+            .pricing-card.featured:hover { transform: translateY(-5px); }
+        }
+        
         @media (max-width: 768px) {
-            .hero h1 { font-size: 36px; }
-            .features-grid, .pricing-grid, .testimonials-grid { grid-template-columns: 1fr; }
+            .hero h1 { font-size: 42px; }
+            .features-grid { grid-template-columns: 1fr; }
             .nav-links { display: none; }
         }
     </style>
 </head>
 <body>
     <nav>
-        <a href="/" class="logo">dyad</a>
+        <div class="logo-container">
+            <img src="/logo.png" alt="Wiazart Logo" class="logo-img">
+            <a href="/" class="logo-text">Wiazart</a>
+        </div>
         <ul class="nav-links">
             <li><a href="#">Docs</a></li>
-            <li><a href="#">Blog</a></li>
-            <li><a href="#">Hub</a></li>
+            <li><a href="#">Community</a></li>
             <li><a href="/login">Members</a></li>
             <li><a href="/login" class="nav-cta">Login</a></li>
         </ul>
     </nav>
 
     <div class="hero">
-        <h1>Use your favorite AI models and tools. Zero lock-in.</h1>
-        <p>Build AI apps locally with deep customization and just enough structure so you never feel lost.</p>
+        <img src="/logo.png" alt="Magic Pig Logo" class="hero-img">
+        <h1>Unleash your Magic. <br>Build Apps Instantly.</h1>
+        <p>Wiazart empowers you to create stunning fullstack applications locally using the best AI models. No proprietary lock-in. Just pure creative freedom.</p>
         <div class="hero-buttons">
-            <a href="#pricing" class="btn btn-dark">View Plans</a>
-            <a href="#features" class="btn btn-outline">Learn More</a>
+            <a href="#pricing" class="btn btn-primary">Start Building</a>
+            <a href="#features" class="btn btn-outline">Explore Features</a>
         </div>
     </div>
 
     <section id="features">
-        <div class="section-label">Why Dyad</div>
-        <h2 class="section-title">Build without limits</h2>
-        <p class="section-subtitle">Dyad never traps you in a proprietary ecosystem—your models, your tools, your code.</p>
+        <div class="section-label">Features</div>
+        <h2 class="section-title">A magical developer experience</h2>
+        <p class="section-subtitle">Wiazart gives you the raw power of AI directly on your machine.</p>
 
         <div class="features-grid">
-            <div class="feature-card">
-                <h3>Use any AI model</h3>
-                <p>Works with OpenAI, Google, Anthropic, and free models. Add almost any model in seconds.</p>
+            <div class="feature-card glass-panel">
+                <h3>Limitless Models</h3>
+                <p>Connect natively to OpenAI, Anthropic, Google, or any open-source local model seamlessly.</p>
             </div>
-            <div class="feature-card">
-                <h3>Your code stays yours</h3>
-                <p>Import existing apps or export anytime. Switch freely between Dyad and other tools.</p>
+            <div class="feature-card glass-panel">
+                <h3>Absolute Ownership</h3>
+                <p>Your code is compiled locally. Export anytime and deploy anywhere. You hold the keys.</p>
             </div>
-            <div class="feature-card">
-                <h3>Bring your own tools</h3>
-                <p>Extend with any MCP server. Use any template or JavaScript framework.</p>
+            <div class="feature-card glass-panel">
+                <h3>Fullstack Ecosystem</h3>
+                <p>Instantly scaffold databases, authentication, and edge functions with integrated Supabase support.</p>
             </div>
-            <div class="feature-card">
-                <h3>Build full-stack with Supabase</h3>
-                <p>Connect your accounts and get instant database, auth, and server function support.</p>
+            <div class="feature-card glass-panel">
+                <h3>Deep Integrations</h3>
+                <p>Extend Wiazart's brain with any custom tool or API via the MCP (Model Context Protocol).</p>
             </div>
-            <div class="feature-card">
-                <h3>Security reviews built-in</h3>
-                <p>Scan for critical security issues and get clear fixes before they become headaches.</p>
+            <div class="feature-card glass-panel">
+                <h3>Real-time Preview</h3>
+                <p>Watch your application come to life dynamically as the AI writes the code in front of you.</p>
             </div>
-            <div class="feature-card">
-                <h3>Publish anywhere</h3>
-                <p>Deploy to GitHub and Vercel in a few clicks—or bring your own cloud.</p>
+            <div class="feature-card glass-panel">
+                <h3>Bank-grade Security</h3>
+                <p>Built-in analysis scans your code to detect vulnerabilities before they hit production.</p>
             </div>
         </div>
     </section>
 
     <section id="pricing">
-        <div class="pricing-header">
-            <div class="section-label">Pricing</div>
-            <h2 class="section-title">Simple, transparent pricing</h2>
-            <p class="section-subtitle" style="margin: 0 auto;">Choose the plan that fits your needs. Upgrade or downgrade anytime—no lock-in, ever.</p>
-        </div>
+        <div class="section-label">Pricing</div>
+        <h2 class="section-title">Transparent magic</h2>
+        <p class="section-subtitle">Choose the tier that unlocks your true potential.</p>
+        
         <div class="pricing-grid" id="pricingGrid">
             <!-- Loaded dynamically from /api/plans -->
         </div>
     </section>
 
-    <section>
-        <div class="section-label">Community</div>
-        <h2 class="section-title">Loved by builders worldwide</h2>
-        <p class="section-subtitle">See what users are saying about Dyad.</p>
-        <div class="testimonials-grid">
-            <div class="testimonial">
-                <p>"I have used Lovable, Base44, MGX, bolt, replit, and a few others, and I have to say, DYAD is the best tool out there!"</p>
-                <div class="testimonial-author">Community Member</div>
-            </div>
-            <div class="testimonial">
-                <p>"Dyad completely changed the way I build web interfaces. It feels like having a design and dev partner that truly understands my ideas."</p>
-                <div class="testimonial-author">@Fluxer_automações</div>
-            </div>
-            <div class="testimonial">
-                <p>"Will, you're a genius. This is better than 95% of the other things I have tried, and I've tried them all going back 25 years."</p>
-                <div class="testimonial-author">u/stevilg</div>
-            </div>
-            <div class="testimonial">
-                <p>"I'm ready to go all in on Dyad. Open source, AI agnostic, runs locally... feels unreal."</p>
-                <div class="testimonial-author">@GGManera</div>
-            </div>
-        </div>
-    </section>
-
-    <div class="founder-quote">
-        <blockquote>"I built Dyad as a local, open-source AI app builder because you should feel like an owner, not a renter. We believe in flexibility, not lock-in."</blockquote>
-        <div class="author">Will Chen</div>
-        <div class="role">Creator of Dyad</div>
-    </div>
-
     <footer>
-        <p>Built with care by the Dyad team</p>
-        <div style="margin-top: 12px;">
-            <a href="#">Terms of Service</a>
-            <a href="#">Privacy Policy</a>
+        <p>&copy; 2026 Wiazart Technologies. All magic reserved.</p>
+        <div style="margin-top: 16px;">
+            <a href="#">Terms</a>
+            <a href="#">Privacy</a>
+            <a href="#">Twitter</a>
         </div>
     </footer>
 
     <script>
+        // Exact original logic preserved to maintain compatibility
         async function loadPlans() {
-            const res = await fetch('/api/plans');
-            const plans = await res.json();
-            const grid = document.getElementById('pricingGrid');
+            try {
+                const res = await fetch('/api/plans');
+                const plans = await res.json();
+                const grid = document.getElementById('pricingGrid');
 
-            plans.forEach(plan => {
-                const isFeatured = plan.id === 'pro';
-                const card = document.createElement('div');
-                card.className = 'pricing-card' + (isFeatured ? ' featured' : '');
+                plans.forEach(plan => {
+                    const isFeatured = plan.id === 'pro';
+                    const card = document.createElement('div');
+                    card.className = 'pricing-card glass-panel' + (isFeatured ? ' featured' : '');
 
-                const featuresHtml = plan.features.map(f => `<li>${f}</li>`).join('');
-                const priceDisplay = plan.price === 0 ? 'Free' : `$${plan.price}<span>/month</span>`;
-                const btnClass = isFeatured ? 'plan-btn plan-btn-primary' : 'plan-btn';
-                const btnText = plan.price === 0 ? 'Get Started' : `Subscribe to ${plan.name.split(' ').pop()}`;
-                const href = plan.price === 0 ? '#features' : `/checkout?plan=${plan.id}`;
+                    const featuresHtml = plan.features.map(f => `<li>${f}</li>`).join('');
+                    const priceDisplay = plan.price === 0 ? 'Free' : `$${plan.price}<span>/mo</span>`;
+                    const btnClass = isFeatured ? 'plan-btn plan-btn-primary' : 'plan-btn';
+                    const btnText = plan.price === 0 ? 'Get Started' : `Subscribe to ${plan.name.split(' ').pop()}`;
+                    const href = plan.price === 0 ? '#features' : `/checkout?plan=${plan.id}`;
 
-                card.innerHTML = `
-                    <div class="plan-name">${plan.name}</div>
-                    <div class="plan-price">${priceDisplay}</div>
-                    <ul class="plan-features">${featuresHtml}</ul>
-                    <a href="${href}" class="${btnClass}">${btnText}</a>
-                `;
-                grid.appendChild(card);
-            });
+                    card.innerHTML = `
+                        <div class="plan-name">${plan.name}</div>
+                        <div class="plan-price">${priceDisplay}</div>
+                        <ul class="plan-features">${featuresHtml}</ul>
+                        <a href="${href}" class="${btnClass}">${btnText}</a>
+                    `;
+                    grid.appendChild(card);
+                });
+            } catch (err) {
+                console.error("Failed to load plans", err);
+            }
         }
         loadPlans();
     </script>

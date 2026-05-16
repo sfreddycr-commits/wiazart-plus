@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login | Dyad</title>
+    <title>Login | Wiazart</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
@@ -24,7 +24,7 @@
 </head>
 <body>
     <div class="login-box">
-        <div class="logo">dyad</div>
+        <div class="logo">wiazart</div>
         <div class="subtitle">Sign in to your account</div>
         <div id="error" class="error"></div>
         <form id="loginForm">
@@ -55,8 +55,8 @@
             });
             const data = await res.json();
             if (res.ok) {
-                localStorage.setItem('dyad_token', data.token);
-                localStorage.setItem('dyad_user', JSON.stringify(data.user));
+                localStorage.setItem('wiazart_token', data.token);
+                localStorage.setItem('wiazart_user', JSON.stringify(data.user));
                 window.location.href = data.user.isAdmin ? '/admin' : '/dashboard';
             } else {
                 errDiv.textContent = data.error;

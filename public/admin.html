@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin | Dyad</title>
+    <title>Admin | Wiazart</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
@@ -45,14 +45,14 @@
         .modal-actions .btn { flex: 1; }
     </style>
     <script>
-        if (!localStorage.getItem('dyad_token')) window.location.href = '/login';
-        const u = JSON.parse(localStorage.getItem('dyad_user'));
+        if (!localStorage.getItem('wiazart_token')) window.location.href = '/login';
+        const u = JSON.parse(localStorage.getItem('wiazart_user'));
         if (!u?.isAdmin) window.location.href = '/dashboard';
     </script>
 </head>
 <body>
     <nav>
-        <a href="/" class="logo">dyad <span>admin</span></a>
+        <a href="/" class="logo">wiazart <span>admin</span></a>
         <div class="nav-actions">
             <a href="/" class="btn btn-outline" style="font-size: 13px;">View Site</a>
             <a class="logout" onclick="localStorage.clear(); window.location.href='/login'">Log out</a>
