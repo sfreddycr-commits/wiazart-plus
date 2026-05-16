@@ -224,6 +224,11 @@ app.post('/api/admin/providers', async (req, res) => {
   await pool.query('INSERT INTO ai_providers (name, base_url, api_key, model_name, is_active, created_at) VALUES (?, ?, ?, ?, 0, NOW())', [name, baseUrl, apiKey, modelName || '']);
   res.json({ ok: true });
 });
+app.put('/api/admin/providers/:id', async (req, res) => {
+  const { name, baseUrl, apiKey, modelName } = req.body;
+  await pool.query('UPDATE ai_providers SET name = ?, base_url = ?, api_key = ?, model_name = ? WHERE id = ?', [name, baseUrl, apiKey, modelName || '', req.params.id]);
+  res.json({ ok: true });
+});
 app.post('/api/admin/providers/:id/activate', async (req, res) => {
   await pool.query('UPDATE ai_providers SET is_active = 0');
   await pool.query('UPDATE ai_providers SET is_active = 1 WHERE id = ?', [req.params.id]);
