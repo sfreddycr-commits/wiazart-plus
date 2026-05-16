@@ -1,21 +1,17 @@
 {
-  "name": "dyad-dashboard",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "name": "wiazart-gateway",
+  "version": "2.0.0",
+  "description": "Wiazart API Gateway",
+  "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node server.js",
+    "dev": "node server.js"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "type": "commonjs",
   "dependencies": {
-    "bcryptjs": "^3.0.3",
-    "better-sqlite3": "^12.10.0",
+    "bcryptjs": "^2.4.3",
     "cors": "^2.8.6",
-    "dotenv": "^17.4.2",
-    "express": "^5.2.1",
+    "dotenv": "^16.6.1",
+    "express": "^4.22.2",
     "jsonwebtoken": "^9.0.3",
     "morgan": "^1.10.1",
     "mysql2": "^3.22.3"
