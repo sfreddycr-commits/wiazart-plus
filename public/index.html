@@ -3,187 +3,470 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Wiazart | Fullstack AI Webapps</title>
-    <meta name="description" content="Use your favorite AI models and tools to build AI apps locally. Zero lock-in.">
+    <title>Wiazart | Fullstack AI Developer Workspace</title>
+    <meta name="description" content="Deploy, execute, and scale fullstack AI applications locally with zero lock-in and complete data security.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
         :root {
-            --primary: #6d28d9;
-            --primary-light: #8b5cf6;
+            --bg-deep: #090514;
+            --bg-surface: rgba(25, 16, 47, 0.4);
+            --bg-surface-solid: #150f28;
+            --primary: #8b5cf6;
+            --primary-glow: rgba(139, 92, 246, 0.15);
             --secondary: #0ea5e9;
-            --bg-body: #f8fafc;
-            --bg-card: #ffffff;
-            --text-main: #1e293b;
-            --text-muted: #64748b;
-            --border: #e2e8f0;
+            --secondary-glow: rgba(14, 165, 233, 0.15);
+            --accent: #06b6d4;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border-light: rgba(255, 255, 255, 0.08);
+            --border-glow: rgba(139, 92, 246, 0.3);
+            --glow-cyan: rgba(6, 182, 212, 0.25);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
         
         body { 
             font-family: 'Inter', sans-serif; 
-            background: var(--bg-body); 
+            background: var(--bg-deep); 
             color: var(--text-main);
             overflow-x: hidden;
             background-image: 
-                radial-gradient(circle at 0% 0%, rgba(109, 40, 217, 0.03), transparent 40%),
-                radial-gradient(circle at 100% 100%, rgba(14, 165, 233, 0.03), transparent 40%);
+                radial-gradient(circle at 10% 20%, rgba(139, 92, 246, 0.08), transparent 50%),
+                radial-gradient(circle at 90% 80%, rgba(14, 165, 233, 0.08), transparent 50%);
         }
 
-        h1, h2, h3, .logo-text { font-family: 'Outfit', sans-serif; }
+        h1, h2, h3, h4, .logo-text { font-family: 'Outfit', sans-serif; }
+
+        /* ── Scrollbar ── */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg-deep); }
+        ::-webkit-scrollbar-thumb { background: #3b2c65; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--primary); }
 
         /* ── Nav ── */
         nav { 
             max-width: 1200px; 
-            margin: 24px auto; 
-            padding: 12px 24px; 
+            margin: 20px auto; 
+            padding: 14px 28px; 
             display: flex; 
             justify-content: space-between; 
             align-items: center; 
             position: sticky;
-            top: 24px;
-            z-index: 100;
-            background: rgba(255, 255, 255, 0.8);
+            top: 20px;
+            z-index: 1000;
+            background: rgba(13, 8, 25, 0.7);
             backdrop-filter: blur(20px);
-            border: 1px solid var(--border);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--border-light);
             border-radius: 100px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 10px 30px -10px rgba(0,0,0,0.5);
+            margin-left: 20px;
+            margin-right: 20px;
         }
         
         .logo-area { display: flex; align-items: center; gap: 12px; }
         .logo-box {
-            width: 36px; height: 36px; background: var(--primary); border-radius: 10px;
-            display: flex; align-items: center; justify-content: center; color: #fff;
+            width: 40px; height: 40px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center; overflow: hidden;
+            box-shadow: 0 0 15px var(--primary);
         }
-        .logo-text { font-size: 22px; font-weight: 800; color: var(--text-main); }
-
+        .logo-text { font-size: 24px; font-weight: 900; letter-spacing: -0.5px; background: linear-gradient(135deg, #fff 40%, var(--primary-light) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+ 
         .nav-links { display: flex; gap: 32px; list-style: none; align-items: center; }
-        .nav-links a { font-size: 14px; font-weight: 600; color: var(--text-muted); text-decoration: none; transition: 0.2s; }
-        .nav-links a:hover { color: var(--primary); }
-        .nav-cta { background: var(--primary); color: #fff !important; padding: 8px 20px; border-radius: 100px; }
-        .nav-cta:hover { background: var(--primary-light); }
+        .nav-links a { font-size: 14px; font-weight: 500; color: var(--text-muted); text-decoration: none; transition: 0.3s; }
+        .nav-links a:hover { color: var(--text-main); text-shadow: 0 0 8px rgba(255,255,255,0.5); }
+        .nav-cta { 
+            background: linear-gradient(135deg, var(--primary), #7c3aed); 
+            color: #fff !important; 
+            padding: 10px 24px; 
+            border-radius: 100px; 
+            font-weight: 600;
+            box-shadow: 0 4px 15px var(--primary-glow);
+            transition: 0.3s !important;
+        }
+        .nav-cta:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(139, 92, 246, 0.4); }
 
         /* ── Hero ── */
         .hero { 
-            max-width: 1000px; 
-            margin: 100px auto; 
+            max-width: 1100px; 
+            margin: 80px auto 120px; 
             text-align: center; 
             padding: 0 24px; 
+            position: relative;
         }
         .hero-badge {
-            display: inline-block; padding: 6px 16px; background: #f5f3ff; color: var(--primary);
-            border-radius: 100px; font-size: 13px; font-weight: 700; margin-bottom: 24px;
-            border: 1px solid #ddd6fe;
+            display: inline-flex; align-items: center; gap: 8px;
+            padding: 8px 18px; background: rgba(139, 92, 246, 0.1); color: #c084fc;
+            border-radius: 100px; font-size: 13px; font-weight: 700; margin-bottom: 32px;
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            letter-spacing: 0.5px;
+            box-shadow: inset 0 0 12px rgba(139, 92, 246, 0.1);
         }
-        .hero h1 { font-size: 64px; font-weight: 800; letter-spacing: -2px; line-height: 1.1; margin-bottom: 24px; color: #0f172a; }
-        .hero p { font-size: 20px; color: var(--text-muted); max-width: 700px; margin: 0 auto 40px; line-height: 1.6; }
+        .hero h1 { font-size: 72px; font-weight: 900; letter-spacing: -3px; line-height: 1.05; margin-bottom: 28px; }
+        .hero h1 span {
+            background: linear-gradient(135deg, #fff 30%, var(--primary) 70%, var(--secondary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .hero p { font-size: 21px; color: var(--text-muted); max-width: 760px; margin: 0 auto 48px; line-height: 1.6; font-weight: 300; }
 
         .btn { 
             display: inline-flex; align-items: center; gap: 10px; 
-            padding: 16px 32px; border-radius: 100px; font-weight: 700; font-size: 16px; 
-            border: none; cursor: pointer; transition: 0.3s; text-decoration: none;
+            padding: 18px 36px; border-radius: 100px; font-weight: 700; font-size: 16px; 
+            border: none; cursor: pointer; transition: 0.3s ease; text-decoration: none;
         }
-        .btn-primary { background: var(--primary); color: #fff; box-shadow: 0 10px 15px -3px rgba(109, 40, 217, 0.3); }
-        .btn-primary:hover { transform: translateY(-2px); background: var(--primary-light); }
-        .btn-outline { background: #fff; border: 1px solid var(--border); color: var(--text-main); }
-        .btn-outline:hover { background: #f8fafc; border-color: var(--primary); color: var(--primary); }
+        .btn-primary { 
+            background: linear-gradient(135deg, var(--primary) 0%, #6d28d9 100%); 
+            color: #fff; 
+            box-shadow: 0 10px 25px -5px rgba(139, 92, 246, 0.4); 
+        }
+        .btn-primary:hover { 
+            transform: translateY(-3px); 
+            box-shadow: 0 15px 30px -5px rgba(139, 92, 246, 0.6); 
+        }
+        .btn-outline { 
+            background: rgba(255, 255, 255, 0.03); 
+            border: 1px solid var(--border-light); 
+            color: var(--text-main); 
+        }
+        .btn-outline:hover { 
+            background: rgba(255, 255, 255, 0.07); 
+            border-color: var(--primary); 
+            transform: translateY(-3px);
+        }
 
-        /* ── Features ── */
-        .features { padding: 100px 24px; max-width: 1200px; margin: 0 auto; }
-        .section-title { text-align: center; margin-bottom: 60px; }
-        .section-title h2 { font-size: 40px; font-weight: 800; margin-bottom: 12px; }
-        .section-title p { color: var(--text-muted); font-size: 18px; }
+        /* ── Workspace Simulator Mockup ── */
+        .workspace-preview {
+            max-width: 1000px;
+            margin: 60px auto 0;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(10, 6, 22, 0.8);
+            box-shadow: 0 30px 60px -15px rgba(0,0,0,0.8), 0 0 50px -10px var(--primary-glow);
+            overflow: hidden;
+            text-align: left;
+        }
+        .window-bar {
+            background: #120c24;
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--border-light);
+        }
+        .window-dots { display: flex; gap: 8px; }
+        .window-dot { width: 12px; height: 12px; border-radius: 50%; }
+        .dot-red { background: #ef4444; }
+        .dot-yellow { background: #f59e0b; }
+        .dot-green { background: #10b981; }
+        .window-title { font-size: 12px; color: var(--text-muted); font-family: monospace; }
+        
+        .workspace-grid {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            height: 480px;
+        }
+        .workspace-sidebar {
+            background: #0d081b;
+            border-right: 1px solid var(--border-light);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        .sidebar-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 14px;
+            border-radius: 8px;
+            font-size: 13px;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+        .sidebar-item.active {
+            background: rgba(139, 92, 246, 0.1);
+            color: var(--text-main);
+            border: 1px solid rgba(139, 92, 246, 0.2);
+        }
+        .workspace-body {
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            background: radial-gradient(circle at 100% 0%, rgba(139, 92, 246, 0.05), transparent 60%);
+        }
+        .console-output {
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 13px;
+            line-height: 1.6;
+            color: #a78bfa;
+            flex: 1;
+        }
+        .console-line {
+            margin-bottom: 8px;
+            opacity: 0;
+            transform: translateY(5px);
+            animation: showLine 12s infinite;
+        }
+        .line-1 { animation-delay: 1s; }
+        .line-2 { animation-delay: 3.5s; color: var(--accent); }
+        .line-3 { animation-delay: 6s; color: #10b981; }
+        .line-4 { animation-delay: 8.5s; color: #f59e0b; }
 
-        .features-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
-        .feature-card { background: #fff; padding: 40px 32px; border-radius: 24px; border: 1px solid var(--border); transition: 0.3s; }
-        .feature-card:hover { transform: translateY(-5px); border-color: var(--primary); box-shadow: 0 10px 15px -3px rgba(0,0,0,0.05); }
-        .feature-card i { color: var(--primary); margin-bottom: 20px; }
-        .feature-card h3 { font-size: 20px; margin-bottom: 12px; }
-        .feature-card p { font-size: 15px; color: var(--text-muted); line-height: 1.6; }
+        @keyframes showLine {
+            0% { opacity: 0; transform: translateY(5px); }
+            5% { opacity: 1; transform: translateY(0); }
+            90% { opacity: 1; transform: translateY(0); }
+            95% { opacity: 0; }
+            100% { opacity: 0; }
+        }
+
+        .workspace-input-area {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-light);
+            border-radius: 12px;
+            padding: 14px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .input-placeholder { font-size: 14px; color: var(--text-muted); }
+        .input-btn { width: 32px; height: 32px; border-radius: 50%; background: var(--primary); display: flex; align-items: center; justify-content: center; color: #fff; }
+
+        /* ── Superpowers Section ── */
+        .features { padding: 120px 24px; max-width: 1200px; margin: 0 auto; position: relative; }
+        .section-title { text-align: center; margin-bottom: 80px; }
+        .section-title h2 { font-size: 48px; font-weight: 800; margin-bottom: 16px; letter-spacing: -1.5px; }
+        .section-title p { color: var(--text-muted); font-size: 20px; font-weight: 300; }
+
+        .features-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 32px; }
+        .feature-card { 
+            background: var(--bg-surface); 
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            padding: 48px 40px; 
+            border-radius: 28px; 
+            border: 1px solid var(--border-light); 
+            transition: 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative;
+            overflow: hidden;
+        }
+        .feature-card::before {
+            content: ''; position: absolute; inset: 0;
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), transparent 60%);
+            opacity: 0; transition: 0.4s;
+        }
+        .feature-card:hover { 
+            transform: translateY(-6px); 
+            border-color: var(--border-glow); 
+            box-shadow: 0 20px 40px -15px rgba(139, 92, 246, 0.2); 
+        }
+        .feature-card:hover::before { opacity: 1; }
+        
+        .icon-box {
+            width: 56px; height: 56px; border-radius: 16px;
+            background: rgba(139, 92, 246, 0.1);
+            display: flex; align-items: center; justify-content: center;
+            color: var(--primary); margin-bottom: 28px;
+            border: 1px solid rgba(139, 92, 246, 0.2);
+            box-shadow: inset 0 0 10px rgba(139, 92, 246, 0.1);
+        }
+        .feature-card:hover .icon-box {
+            background: var(--primary);
+            color: #fff;
+            box-shadow: 0 0 20px var(--primary-glow);
+        }
+        .feature-card h3 { font-size: 24px; margin-bottom: 16px; font-weight: 700; letter-spacing: -0.5px; }
+        .feature-card p { font-size: 16px; color: var(--text-muted); line-height: 1.7; font-weight: 300; }
 
         /* ── Pricing ── */
-        .pricing { padding: 100px 24px; max-width: 1200px; margin: 0 auto; }
-        .pricing-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; }
-        .pricing-card { background: #fff; padding: 40px; border-radius: 32px; border: 1px solid var(--border); display: flex; flex-direction: column; transition: 0.3s; }
-        .pricing-card.featured { border-color: var(--primary); border-width: 2px; transform: scale(1.05); box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05); }
-        .plan-name { font-size: 18px; font-weight: 700; color: var(--primary); margin-bottom: 8px; }
-        .plan-price { font-size: 48px; font-weight: 800; margin-bottom: 24px; }
-        .plan-price span { font-size: 16px; font-weight: 500; color: var(--text-muted); }
-        .plan-features { list-style: none; margin-bottom: 32px; flex: 1; }
-        .plan-features li { padding: 10px 0; font-size: 15px; display: flex; align-items: center; gap: 12px; color: var(--text-main); }
-        .plan-features li i { color: var(--primary); font-size: 16px; }
+        .pricing { padding: 120px 24px; max-width: 1200px; margin: 0 auto; }
+        .pricing-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; justify-content: center; align-items: stretch; }
+        .pricing-card { 
+            background: var(--bg-surface); 
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            padding: 48px 40px; 
+            border-radius: 32px; 
+            border: 1px solid var(--border-light); 
+            display: flex; 
+            flex-direction: column; 
+            transition: 0.4s;
+            position: relative;
+        }
+        .pricing-card.featured { 
+            border-color: var(--primary); 
+            border-width: 2px; 
+            transform: scale(1.03); 
+            background: rgba(23, 13, 44, 0.6);
+            box-shadow: 0 25px 50px -12px rgba(139, 92, 246, 0.25); 
+        }
+        .featured-tag {
+            position: absolute; top: -16px; left: 50%; transform: translateX(-50%);
+            background: linear-gradient(135deg, var(--primary), #a855f7);
+            color: #fff; font-size: 11px; font-weight: 800; padding: 6px 16px;
+            border-radius: 100px; text-transform: uppercase; letter-spacing: 1px;
+            box-shadow: 0 4px 12px rgba(139,92,246,0.3);
+        }
+        .plan-name { font-size: 20px; font-weight: 800; color: #fff; margin-bottom: 12px; letter-spacing: -0.5px; }
+        .plan-price { font-size: 56px; font-weight: 900; margin-bottom: 28px; letter-spacing: -2px; }
+        .plan-price span { font-size: 18px; font-weight: 400; color: var(--text-muted); letter-spacing: 0; }
+        .plan-features { list-style: none; margin-bottom: 40px; flex: 1; }
+        .plan-features li { padding: 12px 0; font-size: 15px; display: flex; align-items: center; gap: 12px; color: var(--text-main); font-weight: 300; }
+        .plan-features li i { color: var(--primary); font-size: 18px; flex-shrink: 0; }
+        
+        .pricing-card .btn { justify-content: center; width: 100%; }
 
-        footer { text-align: center; padding: 60px 24px; border-top: 1px solid var(--border); color: var(--text-muted); font-size: 14px; }
+        /* ── Footer ── */
+        footer { 
+            max-width: 1200px; margin: 0 auto;
+            text-align: center; padding: 80px 24px 60px; 
+            border-top: 1px solid var(--border-light); 
+            color: var(--text-muted); font-size: 14px; 
+        }
+        footer .logo-area { justify-content: center; margin-bottom: 24px; }
+        footer p { font-weight: 300; }
 
-        @media (max-width: 1024px) { .pricing-grid, .features-grid { grid-template-columns: 1fr; } .pricing-card.featured { transform: scale(1); } }
-        @media (max-width: 768px) { .hero h1 { font-size: 42px; } .nav-links { display: none; } }
+        @media (max-width: 1024px) { 
+            .pricing-grid, .features-grid { grid-template-columns: 1fr; } 
+            .pricing-card.featured { transform: scale(1); } 
+            .workspace-grid { grid-template-columns: 1fr; }
+            .workspace-sidebar { display: none; }
+        }
+        @media (max-width: 768px) { 
+            .hero h1 { font-size: 46px; } 
+            .hero p { font-size: 18px; }
+            .nav-links { display: none; } 
+        }
+
+        /* Float animation */
+        @keyframes float {
+            0% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-12px) rotate(2deg); }
+            100% { transform: translateY(0px) rotate(0deg); }
+        }
+        .mascot-float {
+            animation: float 6s ease-in-out infinite;
+            filter: drop-shadow(0 0 20px rgba(139, 92, 246, 0.3));
+        }
     </style>
 </head>
 <body>
     <nav>
         <div class="logo-area">
-            <div class="logo-box"><i data-lucide="zap"></i></div>
+            <div class="logo-box"><img src="/logo.png" style="width: 100%; height: 100%; object-fit: contain;"></div>
             <span class="logo-text">Wiazart</span>
         </div>
         <ul class="nav-links">
-            <li><a href="#features">Features</a></li>
+            <li><a href="#features">Superpowers</a></li>
             <li><a href="#pricing">Pricing</a></li>
             <li><a href="/login">Docs</a></li>
-            <li><a href="/login" class="nav-cta">Login</a></li>
+            <li><a href="/login" class="nav-cta">Login Gateway</a></li>
         </ul>
     </nav>
 
     <main>
+        <!-- Hero Section -->
         <section class="hero">
-            <div class="hero-badge">NEW: Version 2.3 is out!</div>
-            <h1>The magic wand for <br> modern developers.</h1>
-            <p>Build, deploy, and scale fullstack AI applications locally with zero lock-in and bank-grade security.</p>
-            <div style="display: flex; gap: 16px; justify-content: center;">
-                <a href="#pricing" class="btn btn-primary"><i data-lucide="rocket"></i> Get Started</a>
-                <a href="#features" class="btn btn-outline">Explore Features</a>
+            <img src="/logo.png" class="mascot-float" style="width: 140px; height: 140px; margin-bottom: 24px; object-fit: contain;" alt="Wiazart Mascot">
+            <div class="hero-badge"><i data-lucide="sparkles" style="width:14px;height:14px;color:#c084fc;"></i> Supercharged Engine Version 3.0</div>
+            <h1>The magic wand for <br> <span>Fullstack AI Webapps.</span></h1>
+            <p>Deploy, execute, and scale dynamic AI applications locally on your machine. Zero vendor lock-in, complete database control, and bank-grade private sandboxes.</p>
+            <div style="display: flex; gap: 16px; justify-content: center; flex-wrap: wrap;">
+                <a href="#pricing" class="btn btn-primary"><i data-lucide="zap"></i> Start Free Journey</a>
+                <a href="#features" class="btn btn-outline">Explore Superpowers</a>
+            </div>
+
+            <!-- Workspace Preview Mockup -->
+            <div class="workspace-preview">
+                <div class="window-bar">
+                    <div class="window-dots">
+                        <div class="window-dot dot-red"></div>
+                        <div class="window-dot dot-yellow"></div>
+                        <div class="window-dot dot-green"></div>
+                    </div>
+                    <div class="window-title">wiazart-agent-v3.sh</div>
+                    <div style="width: 48px;"></div>
+                </div>
+                <div class="workspace-grid">
+                    <aside class="workspace-sidebar">
+                        <div class="sidebar-item active"><i data-lucide="terminal" style="width:16px;"></i> agent_session</div>
+                        <div class="sidebar-item"><i data-lucide="files" style="width:16px;"></i> codebase_tree</div>
+                        <div class="sidebar-item"><i data-lucide="settings" style="width:16px;"></i> provider_nodes</div>
+                    </aside>
+                    <div class="workspace-body">
+                        <div class="console-output">
+                            <div class="console-line line-1">⚡ Wiazart Agent initialized. Analysing workspace directory...</div>
+                            <div class="console-line line-2">🔍 [Visual Eye] Capturing layout screenshot. Found 1 design warning. Fixing CSS styles...</div>
+                            <div class="console-line line-3">📦 [Terminal Exec] npx tailwindcss build -o public/output.css -- completed successfully.</div>
+                            <div class="console-line line-4">✨ App fully operational in local sandbox. Listening on port 3000.</div>
+                        </div>
+                        <div class="workspace-input-area">
+                            <div class="input-placeholder">Build me a stunning real-time chat application with local sqlite...</div>
+                            <div class="input-btn"><i data-lucide="arrow-right" style="width:16px;height:16px;"></i></div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </section>
 
+        <!-- Superpowers Showcase -->
         <section id="features" class="features">
             <div class="section-title">
-                <h2>Why choose Wiazart?</h2>
-                <p>Everything you need to build the future of the web.</p>
+                <h2>AI Developer Superpowers</h2>
+                <p>Equipped with professional desktop tools to design, compile, and run web software autonomously.</p>
             </div>
             <div class="features-grid">
+                <!-- Superpower 1 -->
                 <div class="feature-card">
-                    <i data-lucide="cpu"></i>
-                    <h3>Local First</h3>
-                    <p>Develop and test your AI applications entirely on your machine for maximum privacy and speed.</p>
+                    <div class="icon-box"><i data-lucide="eye"></i></div>
+                    <h3>👁️ Visual AI Design Eye</h3>
+                    <p>No longer coding blind. Wiazart captures screenshots of your local application previews, inspects alignments, contrast ratios, and typography automatically, correcting design flaws instantly.</p>
                 </div>
+                <!-- Superpower 2 -->
                 <div class="feature-card">
-                    <i data-lucide="shield-check"></i>
-                    <h3>Secure by Design</h3>
-                    <p>Integrated vulnerability scanning and encryption for your API keys and sensitive data.</p>
+                    <div class="icon-box"><i data-lucide="terminal"></i></div>
+                    <h3>⚡ Native Terminal Powers</h3>
+                    <p>Full hands-free execution. Wiazart executes commands directly on your local system, installs NPM/python libraries, configures build toolchains, and starts dev servers securely with your approval.</p>
                 </div>
+                <!-- Superpower 3 -->
                 <div class="feature-card">
-                    <i data-lucide="zap"></i>
-                    <h3>Instant Preview</h3>
-                    <p>See your changes in real-time as the AI constructs your application layer by layer.</p>
+                    <div class="icon-box"><i data-lucide="globe"></i></div>
+                    <h3>🌐 Real-Time Live Web Search</h3>
+                    <p>Never stuck with outdated context. Wiazart browses the internet in real-time to query the latest technology updates, crawl official developer documentation, and pull current API structures directly.</p>
+                </div>
+                <!-- Superpower 4 -->
+                <div class="feature-card">
+                    <div class="icon-box"><i data-lucide="map"></i></div>
+                    <h3>📋 Multi-Step Planning Mode</h3>
+                    <p>Safety and architecture first. Wiazart blocks destructive actions by drafting comprehensive blueprints and questionnaire check-ups, ensuring you approve the implementation steps before coding begins.</p>
                 </div>
             </div>
         </section>
 
+        <!-- Transparent Pricing -->
         <section id="pricing" class="pricing">
             <div class="section-title">
-                <h2>Transparent Pricing</h2>
-                <p>Simple plans for developers of all sizes.</p>
+                <h2>Transparent Pricing Plans</h2>
+                <p>Unleash the full power of local AI app building.</p>
             </div>
             <div class="pricing-grid" id="pricingGrid">
-                <!-- Dynamically loaded -->
+                <!-- Loaded dynamically from api/plans -->
             </div>
         </section>
     </main>
 
     <footer>
-        <p>&copy; 2026 Wiazart Technologies. All magic reserved.</p>
+        <div class="logo-area">
+            <div class="logo-box"><img src="/logo.png" style="width: 100%; height: 100%; object-fit: contain;"></div>
+            <span class="logo-text">Wiazart</span>
+        </div>
+        <p>&copy; 2026 Wiazart Technologies. Unleashing developer magic locally.</p>
     </footer>
 
     <script>
@@ -194,6 +477,7 @@
                 const res = await fetch('/api/plans');
                 const plans = await res.json();
                 const grid = document.getElementById('pricingGrid');
+                grid.innerHTML = '';
 
                 plans.forEach(plan => {
                     const isFeatured = plan.id === 'pro';
@@ -204,12 +488,14 @@
                     const priceDisplay = plan.price === 0 ? 'Free' : `$${plan.price}<span>/mo</span>`;
                     const btnClass = isFeatured ? 'btn btn-primary' : 'btn btn-outline';
                     const btnText = plan.price === 0 ? 'Start Free' : `Join ${plan.name}`;
+                    const featuredTagHtml = isFeatured ? `<div class="featured-tag">Highly Recommended</div>` : '';
 
                     card.innerHTML = `
+                        ${featuredTagHtml}
                         <div class="plan-name">${plan.name}</div>
                         <div class="plan-price">${priceDisplay}</div>
                         <ul class="plan-features">${featuresHtml}</ul>
-                        <a href="/login" class="${btnClass}">${btnText}</a>
+                        <a href="/checkout?plan=${plan.id}" class="${btnClass}">${btnText}</a>
                     `;
                     grid.appendChild(card);
                 });

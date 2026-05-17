@@ -4,39 +4,184 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Checkout | Wiazart</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
     <style>
-        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Inter', sans-serif; background: #fafafa; color: #1a1a1a; min-height: 100vh; display: flex; justify-content: center; align-items: center; }
-        .checkout-box { background: #fff; border: 1px solid #e5e5e5; border-radius: 20px; width: 460px; overflow: hidden; }
-        .plan-summary { padding: 28px 36px; border-bottom: 1px solid #eee; }
-        .plan-summary .label { font-size: 13px; color: #888; font-weight: 500; margin-bottom: 4px; }
-        .plan-summary .plan-row { display: flex; justify-content: space-between; align-items: baseline; }
-        .plan-summary .plan-name { font-size: 20px; font-weight: 700; }
-        .plan-summary .plan-price { font-size: 28px; font-weight: 800; }
-        .plan-summary .plan-price span { font-size: 14px; font-weight: 500; color: #888; }
-        .plan-summary .plan-features { margin-top: 16px; list-style: none; }
-        .plan-summary .plan-features li { font-size: 13px; color: #555; padding: 4px 0; display: flex; align-items: center; gap: 8px; }
-        .plan-summary .plan-features li::before { content: '✓'; font-weight: 800; color: #1a1a1a; }
-        .form-area { padding: 28px 36px; }
-        .field { margin-bottom: 18px; }
-        .field label { display: block; font-size: 13px; font-weight: 600; color: #555; margin-bottom: 6px; }
-        .field input { width: 100%; padding: 12px 14px; border: 1px solid #e0e0e0; border-radius: 10px; font-size: 15px; outline: none; }
-        .field input:focus { border-color: #1a1a1a; }
-        .btn { width: 100%; padding: 14px; background: #1a1a1a; color: #fff; border: none; border-radius: 10px; font-weight: 600; font-size: 15px; cursor: pointer; }
-        .btn:hover { background: #333; }
-        .error { background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; padding: 10px; border-radius: 8px; font-size: 13px; margin-bottom: 16px; display: none; }
-        .back { display: block; text-align: center; margin-top: 16px; font-size: 13px; color: #888; }
-        .back a { color: #1a1a1a; font-weight: 600; }
+        :root {
+            --primary: #6d28d9;
+            --primary-light: #8b5cf6;
+            --secondary: #0ea5e9;
+            --bg-body: #f8fafc;
+            --bg-card: #ffffff;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background: var(--bg-body); 
+            color: var(--text-main);
+            min-height: 100vh; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center;
+            background-image: 
+                radial-gradient(circle at 0% 0%, rgba(109, 40, 217, 0.04), transparent 45%),
+                radial-gradient(circle at 100% 100%, rgba(14, 165, 233, 0.04), transparent 45%);
+            padding: 24px;
+        }
+
+        h1, h2, h3, .logo-text, .plan-name { font-family: 'Outfit', sans-serif; }
+
+        .checkout-box { 
+            background: #fff; 
+            border-radius: 32px; 
+            width: 480px; 
+            border: 1px solid var(--border); 
+            box-shadow: 0 25px 50px -12px rgba(109, 40, 217, 0.08);
+            overflow: hidden;
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        .plan-summary { 
+            padding: 36px 40px; 
+            background: linear-gradient(180deg, #fdfcff 0%, #ffffff 100%);
+            border-bottom: 1px solid var(--border); 
+        }
+        
+        .label { 
+            font-size: 13px; 
+            color: var(--text-muted); 
+            font-weight: 600; 
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px; 
+        }
+        
+        .plan-row { display: flex; justify-content: space-between; align-items: baseline; }
+        .plan-name { font-size: 24px; font-weight: 800; color: var(--text-main); }
+        .plan-price { font-size: 32px; font-weight: 800; color: var(--primary); }
+        .plan-price span { font-size: 14px; font-weight: 500; color: var(--text-muted); }
+        
+        .plan-features { margin-top: 24px; list-style: none; display: flex; flex-direction: column; gap: 10px; }
+        .plan-features li { 
+            font-size: 14px; 
+            color: #475569; 
+            display: flex; 
+            align-items: center; 
+            gap: 10px; 
+        }
+        
+        .feature-icon {
+            color: var(--primary);
+            flex-shrink: 0;
+        }
+
+        .form-area { padding: 36px 40px; }
+        
+        .field { margin-bottom: 24px; }
+        .field label { display: block; font-size: 14px; font-weight: 600; color: var(--text-main); margin-bottom: 8px; }
+        .field input { 
+            width: 100%; 
+            padding: 14px 18px; 
+            background: #f8fafc;
+            border: 1px solid var(--border); 
+            border-radius: 14px; 
+            font-size: 15px; 
+            outline: none; 
+            transition: 0.3s;
+        }
+        .field input:focus { 
+            border-color: var(--primary); 
+            background: #fff;
+            box-shadow: 0 0 0 4px rgba(109, 40, 217, 0.1);
+        }
+        
+        .password-wrapper { position: relative; width: 100%; }
+        .password-wrapper input { padding-right: 48px !important; }
+        .toggle-password { 
+            position: absolute; 
+            right: 14px; 
+            top: 50%; 
+            transform: translateY(-50%); 
+            background: none; 
+            border: none; 
+            color: var(--text-muted); 
+            cursor: pointer; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            outline: none;
+            padding: 4px;
+            border-radius: 6px;
+            transition: 0.2s;
+        }
+        .toggle-password:hover { color: var(--primary); background: rgba(109, 40, 217, 0.05); }
+        .toggle-password:focus { color: var(--primary); }
+        
+        .btn { 
+            width: 100%; 
+            padding: 16px; 
+            background: var(--primary); 
+            color: #fff; 
+            border: none; 
+            border-radius: 14px; 
+            font-weight: 700; 
+            font-size: 16px; 
+            cursor: pointer; 
+            transition: 0.3s;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+        }
+        .btn:hover { 
+            transform: translateY(-2px); 
+            box-shadow: 0 10px 15px rgba(109, 40, 217, 0.25); 
+            background: var(--primary-light); 
+        }
+        .btn:active {
+            transform: translateY(0);
+        }
+        
+        .error { 
+            background: #fef2f2; 
+            color: #dc2626; 
+            border: 1px solid #fecaca; 
+            padding: 12px 16px; 
+            border-radius: 12px; 
+            font-size: 14px; 
+            margin-bottom: 24px; 
+            display: none; 
+            text-align: center;
+        }
+        
+        .back { display: block; text-align: center; margin-top: 16px; font-size: 14px; color: var(--text-muted); }
+        .back a { color: var(--primary); font-weight: 600; text-decoration: none; }
+        .back a:hover { text-decoration: underline; }
+
+        @keyframes fadeIn { 
+            from { opacity: 0; transform: translateY(20px); } 
+            to { opacity: 1; transform: translateY(0); } 
+        }
     </style>
 </head>
 <body>
     <div class="checkout-box">
         <div class="plan-summary">
+            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 24px;">
+                <img src="/logo.png" style="width: 48px; height: 48px; object-fit: contain;" alt="Wiazart Mascot">
+                <span style="font-family: 'Outfit', sans-serif; font-size: 22px; font-weight: 800; color: var(--text-main); letter-spacing: -0.5px;">Wiazart</span>
+            </div>
             <div class="label">You're subscribing to</div>
             <div class="plan-row">
                 <div class="plan-name" id="planName">Wiazart Pro</div>
-                <div class="plan-price" id="planPrice">$20<span>/mo</span></div>
+                <div class="plan-price" id="planPrice">$19<span>/mo</span></div>
             </div>
             <ul class="plan-features" id="planFeatures"></ul>
         </div>
@@ -44,53 +189,124 @@
             <div id="error" class="error"></div>
             <form id="checkoutForm">
                 <div class="field">
-                    <label>Email</label>
-                    <input type="email" id="email" placeholder="you@example.com" required>
+                    <label>Email Address</label>
+                    <input type="email" id="email" placeholder="you@wiazart.com" required>
                 </div>
                 <div class="field">
                     <label>Create Password</label>
-                    <input type="password" id="password" placeholder="Min 6 characters" required minlength="6">
+                    <div class="password-wrapper">
+                        <input type="password" id="password" placeholder="Min 6 characters" required minlength="6">
+                        <button type="button" class="toggle-password" onclick="togglePasswordVisibility('password', this)">
+                            <i data-lucide="eye" style="width: 18px; height: 18px;"></i>
+                        </button>
+                    </div>
                 </div>
-                <button type="submit" class="btn">Create Account & Subscribe</button>
+                <div class="field">
+                    <label>Confirm Password</label>
+                    <div class="password-wrapper">
+                        <input type="password" id="confirmPassword" placeholder="Repeat your password" required minlength="6">
+                        <button type="button" class="toggle-password" onclick="togglePasswordVisibility('confirmPassword', this)">
+                            <i data-lucide="eye" style="width: 18px; height: 18px;"></i>
+                        </button>
+                    </div>
+                </div>
+                <button type="submit" class="btn">
+                    <span>Create Account & Subscribe</span>
+                    <i data-lucide="arrow-right" style="width:18px;height:18px;"></i>
+                </button>
             </form>
             <div class="back"><a href="/">← Back to plans</a></div>
+            <div class="back" style="margin-top: 12px;">Already have an account? <a href="/login">Log In</a></div>
         </div>
     </div>
     <script>
+        lucide.createIcons();
         const planId = new URLSearchParams(window.location.search).get('plan') || 'pro';
 
         async function loadPlan() {
-            const res = await fetch('/api/plans');
-            const plans = await res.json();
-            const plan = plans.find(p => p.id === planId);
-            if (!plan) { document.getElementById('planName').textContent = 'Plan not found'; return; }
-            document.getElementById('planName').textContent = plan.name;
-            document.getElementById('planPrice').innerHTML = plan.price === 0 ? 'Free' : `$${plan.price}<span>/mo</span>`;
-            document.getElementById('planFeatures').innerHTML = plan.features.map(f => `<li>${f}</li>`).join('');
+            try {
+                const res = await fetch('/api/plans');
+                const plans = await res.json();
+                const plan = plans.find(p => p.id === planId);
+                if (!plan) { 
+                    document.getElementById('planName').textContent = 'Plan not found'; 
+                    return; 
+                }
+                document.getElementById('planName').textContent = plan.name;
+                document.getElementById('planPrice').innerHTML = plan.price === 0 ? 'Free' : `$${plan.price}<span>/mo</span>`;
+                
+                const featuresHtml = plan.features.map(f => `
+                    <li>
+                        <i data-lucide="check-circle" class="feature-icon" style="width:16px;height:16px;"></i>
+                        <span>${f}</span>
+                    </li>
+                `).join('');
+                document.getElementById('planFeatures').innerHTML = featuresHtml;
+                lucide.createIcons();
+            } catch(e) {
+                console.error("Failed to load plan details", e);
+            }
         }
         loadPlan();
+
+        function togglePasswordVisibility(fieldId, btn) {
+            const input = document.getElementById(fieldId);
+            const icon = btn.querySelector('i');
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.setAttribute('data-lucide', 'eye-off');
+            } else {
+                input.type = 'password';
+                icon.setAttribute('data-lucide', 'eye');
+            }
+            lucide.createIcons();
+        }
 
         document.getElementById('checkoutForm').onsubmit = async (e) => {
             e.preventDefault();
             const errDiv = document.getElementById('error');
-            errDiv.style.display = 'none';
-            const res = await fetch('/api/auth/signup', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    email: document.getElementById('email').value,
-                    password: document.getElementById('password').value,
-                    planId
-                })
-            });
-            const data = await res.json();
-            if (res.ok) {
-                localStorage.setItem('wiazart_token', data.token);
-                localStorage.setItem('wiazart_user', JSON.stringify(data.user));
-                window.location.href = '/dashboard';
-            } else {
-                errDiv.textContent = data.error;
+            const btn = e.target.querySelector('button');
+            const originalHtml = btn.innerHTML;
+            
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+
+            if (password !== confirmPassword) {
+                errDiv.textContent = 'Passwords do not match.';
                 errDiv.style.display = 'block';
+                return;
+            }
+
+            errDiv.style.display = 'none';
+            btn.innerHTML = 'Processing...';
+            btn.disabled = true;
+            
+            try {
+                const res = await fetch('/api/auth/signup', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        email: document.getElementById('email').value,
+                        password,
+                        planId
+                    })
+                });
+                const data = await res.json();
+                if (res.ok) {
+                    localStorage.setItem('wiazart_token', data.token);
+                    localStorage.setItem('wiazart_user', JSON.stringify(data.user));
+                    window.location.href = '/dashboard';
+                } else {
+                    errDiv.textContent = data.error || 'Signup failed';
+                    errDiv.style.display = 'block';
+                    btn.innerHTML = originalHtml;
+                    btn.disabled = false;
+                }
+            } catch (err) {
+                errDiv.textContent = 'Connection error. Please try again.';
+                errDiv.style.display = 'block';
+                btn.innerHTML = originalHtml;
+                btn.disabled = false;
             }
         };
     </script>

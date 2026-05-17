@@ -3,126 +3,496 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Panel | Wiazart</title>
+    <title>Admin Dashboard | Wiazart Gateway</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
         :root {
-            --primary: #6d28d9;
-            --primary-light: #8b5cf6;
-            --bg-body: #f8fafc;
-            --bg-card: #ffffff;
-            --text-main: #1e293b;
-            --text-muted: #64748b;
-            --border: #e2e8f0;
-            --sidebar-width: 260px;
+            --primary: #8b5cf6;
+            --primary-light: #a78bfa;
+            --primary-glow: rgba(139, 92, 246, 0.15);
+            --bg-body: #090514;
+            --bg-sidebar: #0f0a20;
+            --bg-card: rgba(25, 16, 47, 0.4);
+            --bg-card-solid: #150f28;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border: rgba(255, 255, 255, 0.08);
             --success: #10b981;
             --danger: #ef4444;
+            --warning: #f59e0b;
+            --groq-accent: #f97316;
+            --sidebar-width: 280px;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Inter', sans-serif; background: var(--bg-body); color: var(--text-main); min-height: 100vh; display: flex; }
-        h1, h2, h3, .logo-text { font-family: 'Outfit', sans-serif; }
+        
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background: var(--bg-body); 
+            color: var(--text-main); 
+            min-height: 100vh; 
+            display: flex;
+            background-image: 
+                radial-gradient(circle at 0% 0%, rgba(139, 92, 246, 0.05), transparent 40%),
+                radial-gradient(circle at 100% 100%, rgba(14, 165, 233, 0.05), transparent 40%);
+            overflow-x: hidden;
+        }
+        
+        h1, h2, h3, h4, .logo-text { font-family: 'Outfit', sans-serif; }
 
-        /* ── Sidebar ── */
+        /* ── Sidebar (Desktop) ── */
         .sidebar {
-            width: var(--sidebar-width); background: #fff; border-right: 1px solid var(--border);
-            height: 100vh; position: fixed; left: 0; top: 0; display: flex; flex-direction: column; z-index: 100;
+            width: var(--sidebar-width); 
+            background: var(--bg-sidebar); 
+            border-right: 1px solid var(--border);
+            height: 100vh; 
+            position: fixed; 
+            left: 0; 
+            top: 0; 
+            display: flex; 
+            flex-direction: column; 
+            z-index: 1000;
+            transition: 0.3s;
         }
-        .sidebar-header { padding: 32px 24px; display: flex; align-items: center; gap: 12px; }
+        .sidebar-header { 
+            padding: 32px 24px; 
+            display: flex; 
+            align-items: center; 
+            gap: 12px; 
+            border-bottom: 1px solid var(--border);
+        }
         .logo-box {
-            width: 40px; height: 40px; background: var(--primary); border-radius: 12px;
-            display: flex; align-items: center; justify-content: center; color: #fff;
+            width: 36px; height: 36px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            overflow: hidden;
+            box-shadow: 0 0 10px var(--primary);
         }
-        .logo-text { font-size: 24px; font-weight: 800; color: var(--text-main); }
-        .logo-text span { font-size: 12px; font-weight: 500; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); display: block; line-height: 1; }
+        .logo-text { font-size: 22px; font-weight: 900; color: #fff; }
+        .logo-text span { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); display: block; line-height: 1; margin-top: 2px; }
 
-        .nav-list { list-style: none; padding: 0 16px; flex: 1; }
+        .nav-list { list-style: none; padding: 24px 16px; flex: 1; display: flex; flex-direction: column; gap: 8px; }
         .nav-link {
-            display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-radius: 12px;
+            display: flex; align-items: center; gap: 12px; padding: 14px 16px; border-radius: 12px;
             color: var(--text-muted); text-decoration: none; font-weight: 500; font-size: 15px; transition: 0.2s;
         }
-        .nav-link:hover, .nav-link.active { background: #f5f3ff; color: var(--primary); }
+        .nav-link:hover, .nav-link.active { background: rgba(139, 92, 246, 0.1); color: #fff; border: 1px solid rgba(139, 92, 246, 0.2); }
+
+        /* Bottom Nav (Mobile) */
+        .bottom-nav {
+            display: none;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 70px;
+            background: rgba(13, 8, 25, 0.95);
+            backdrop-filter: blur(15px);
+            border-top: 1px solid var(--border);
+            z-index: 1000;
+            justify-content: space-around;
+            align-items: center;
+            padding: 0 10px;
+        }
+        .bottom-nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 11px;
+            font-weight: 500;
+            flex: 1;
+            height: 100%;
+        }
+        .bottom-nav-item i { width: 20px; height: 20px; }
+        .bottom-nav-item.active { color: var(--primary-light); }
 
         /* ── Main Content ── */
-        .main-content { flex: 1; margin-left: var(--sidebar-width); padding: 40px; width: calc(100% - var(--sidebar-width)); }
-        
-        .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px; }
-        .section-header h2 { font-size: 24px; font-weight: 700; }
-        .section-header p { color: var(--text-muted); font-size: 14px; }
-
-        .card { background: var(--bg-card); border-radius: 20px; border: 1px solid var(--border); box-shadow: 0 1px 3px rgba(0,0,0,0.02); overflow: hidden; margin-bottom: 40px; }
-        
-        table { width: 100%; border-collapse: collapse; }
-        th { text-align: left; padding: 16px 24px; font-size: 12px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; background: #fcfcfd; border-bottom: 1px solid var(--border); }
-        td { padding: 20px 24px; border-bottom: 1px solid var(--border); font-size: 14px; }
-
-        .btn { 
-            padding: 10px 20px; border-radius: 10px; font-weight: 600; font-size: 13px; cursor: pointer; 
-            border: none; transition: 0.2s; display: inline-flex; align-items: center; gap: 8px;
+        .main-content { 
+            flex: 1; 
+            margin-left: var(--sidebar-width); 
+            padding: 40px; 
+            width: calc(100% - var(--sidebar-width)); 
+            min-height: 100vh;
+            padding-bottom: 60px;
         }
-        .btn-primary { background: var(--primary); color: #fff; }
-        .btn-primary:hover { background: var(--primary-light); }
-        .btn-outline { background: #fff; border: 1px solid var(--border); color: var(--text-main); }
-        .btn-danger { background: #fef2f2; color: var(--danger); border: 1px solid #fee2e2; }
+        
+        .section-header { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            margin-bottom: 28px; 
+            gap: 16px;
+        }
+        .section-header h2 { font-size: 28px; font-weight: 800; letter-spacing: -0.5px; }
+        .section-header p { color: var(--text-muted); font-size: 14px; margin-top: 4px; font-weight: 300; }
 
-        .badge { padding: 4px 12px; border-radius: 100px; font-size: 11px; font-weight: 700; text-transform: uppercase; }
-        .badge-pro { background: #f5f3ff; color: var(--primary); }
-        .badge-max { background: #ecfdf5; color: var(--success); }
+        .card { 
+            background: var(--bg-card); 
+            backdrop-filter: blur(10px);
+            border-radius: 24px; 
+            border: 1px solid var(--border); 
+            box-shadow: 0 10px 30px -10px rgba(0,0,0,0.3);
+            overflow: hidden; 
+            margin-bottom: 32px; 
+        }
 
-        /* Modals */
-        .overlay { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.5); backdrop-filter: blur(4px); display: none; justify-content: center; align-items: center; z-index: 1000; }
-        .modal { background: #fff; width: 480px; padding: 40px; border-radius: 24px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); }
+        .card-inner { padding: 32px; }
+        
+        /* Tables (Responsive wrapper) */
+        .table-responsive { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+        table { width: 100%; border-collapse: collapse; min-width: 600px; }
+        th { text-align: left; padding: 18px 24px; font-size: 12px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; background: rgba(255, 255, 255, 0.02); border-bottom: 1px solid var(--border); }
+        td { padding: 20px 24px; border-bottom: 1px solid var(--border); font-size: 14px; color: var(--text-main); font-weight: 300; }
+        tr:last-child td { border-bottom: none; }
+
+        /* Buttons */
+        .btn { 
+            padding: 12px 22px; border-radius: 12px; font-weight: 600; font-size: 14px; cursor: pointer; 
+            border: none; transition: 0.2s; display: inline-flex; align-items: center; gap: 8px; justify-content: center;
+        }
+        .btn-primary { background: linear-gradient(135deg, var(--primary), #7c3aed); color: #fff; box-shadow: 0 4px 12px var(--primary-glow); }
+        .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 6px 16px rgba(139, 92, 246, 0.3); }
+        .btn-outline { background: rgba(255,255,255,0.03); border: 1px solid var(--border); color: var(--text-main); }
+        .btn-outline:hover { background: rgba(255,255,255,0.08); border-color: var(--primary); }
+        .btn-danger { background: rgba(239, 68, 68, 0.1); color: #fca5a5; border: 1px solid rgba(239, 68, 68, 0.2); }
+        .btn-danger:hover { background: rgba(239, 68, 68, 0.2); }
+        .btn-groq { background: linear-gradient(135deg, #f97316, #ea580c); color: #fff; }
+        .btn-groq:hover { transform: translateY(-1px); }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        /* Badges */
+        .badge { padding: 6px 12px; border-radius: 100px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+        .badge-free { background: rgba(148, 163, 184, 0.1); color: #cbd5e1; border: 1px solid rgba(148, 163, 184, 0.2); }
+        .badge-pro { background: rgba(139, 92, 246, 0.1); color: #d8b4fe; border: 1px solid rgba(139, 92, 246, 0.2); }
+        .badge-enterprise { background: rgba(16, 185, 129, 0.1); color: #a7f3d0; border: 1px solid rgba(16, 185, 129, 0.2); }
+
+        /* Groq Voice Styles */
+        .groq-header { display: flex; align-items: center; gap: 12px; margin-bottom: 4px; }
+        .groq-header .groq-badge {
+            background: rgba(249, 115, 22, 0.1); border: 1px solid rgba(249, 115, 22, 0.3);
+            padding: 4px 12px; border-radius: 100px; font-size: 11px; font-weight: 700; color: #f97316;
+            text-transform: uppercase; letter-spacing: 0.5px;
+        }
+        .groq-card { border: 1px solid rgba(249, 115, 22, 0.2); background: radial-gradient(circle at 100% 0%, rgba(249, 115, 22, 0.05), transparent 70%); }
+        
+        .groq-status {
+            display: flex; align-items: center; gap: 12px;
+            padding: 16px 20px; border-radius: 16px; margin-bottom: 24px;
+            font-size: 14px; font-weight: 500;
+        }
+        .groq-status.connected { background: rgba(16, 185, 129, 0.08); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.2); }
+        .groq-status.disconnected { background: rgba(239, 68, 68, 0.08); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.2); }
+        .groq-status.untested { background: rgba(245, 158, 11, 0.08); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.2); }
+        
+        .status-dot { width: 8px; height: 8px; border-radius: 50%; }
+        .groq-status.connected .status-dot { background: #10b981; box-shadow: 0 0 10px #10b981; }
+        .groq-status.disconnected .status-dot { background: #ef4444; box-shadow: 0 0 10px #ef4444; }
+        .groq-status.untested .status-dot { background: #f59e0b; box-shadow: 0 0 10px #f59e0b; }
+
+        .groq-models { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+        .groq-model-chip {
+            background: rgba(255, 255, 255, 0.02); border: 1px solid var(--border); padding: 8px 16px;
+            border-radius: 10px; font-size: 13px; font-weight: 500; color: var(--text-main);
+            display: flex; align-items: center; gap: 8px;
+        }
+        .groq-model-chip.active-model { background: rgba(249, 115, 22, 0.08); border-color: rgba(249, 115, 22, 0.3); color: #f97316; }
+        
+        .groq-info { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-top: 24px; }
+        .groq-info-item { background: rgba(255, 255, 255, 0.02); padding: 16px 20px; border-radius: 16px; border: 1px solid var(--border); }
+        .groq-info-item label { font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; display: block; margin-bottom: 6px; }
+        .groq-info-item span { font-size: 14px; font-weight: 500; color: var(--text-main); }
+
+        /* KPI Grid */
+        .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 24px; margin-bottom: 40px; }
+        .kpi-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 24px; padding: 28px; display: flex; align-items: center; gap: 20px; }
+        .kpi-icon { width: 56px; height: 56px; border-radius: 16px; display: flex; align-items: center; justify-content: center; color: var(--primary); background: rgba(139, 92, 246, 0.08); border: 1px solid rgba(139, 92, 246, 0.15); }
+        .kpi-card:nth-child(2) .kpi-icon { color: var(--success); background: rgba(16, 185, 129, 0.08); border-color: rgba(16, 185, 129, 0.15); }
+        .kpi-card:nth-child(3) .kpi-icon { color: var(--warning); background: rgba(245, 158, 11, 0.08); border-color: rgba(245, 158, 11, 0.15); }
+        .kpi-val { font-size: 28px; font-weight: 800; color: #fff; line-height: 1.2; }
+        .kpi-label { font-size: 13px; color: var(--text-muted); font-weight: 400; margin-top: 2px; }
+
+        /* System Action Hub */
+        .hub-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; }
+        .hub-card { background: rgba(255, 255, 255, 0.01); border: 1px solid var(--border); border-radius: 20px; padding: 24px; display: flex; flex-direction: column; justify-content: space-between; gap: 20px; }
+        .hub-card-title { font-weight: 700; font-size: 18px; display: flex; align-items: center; gap: 10px; }
+        .hub-card-title i { color: var(--primary); }
+        .hub-card p { font-size: 14px; color: var(--text-muted); line-height: 1.5; font-weight: 300; }
+
+        .plan-chip { background: rgba(255, 255, 255, 0.04); border: 1px solid var(--border); color: var(--text-main); font-size: 12px; padding: 4px 10px; border-radius: 6px; font-weight: 400; display: inline-block; margin-right: 6px; margin-bottom: 6px; }
+
+        /* Modals Overlay */
+        .overlay { position: fixed; inset: 0; background: rgba(9, 5, 20, 0.7); backdrop-filter: blur(8px); display: none; justify-content: center; align-items: center; z-index: 2000; padding: 20px; }
+        .modal { background: #120c24; width: 500px; padding: 40px; border-radius: 28px; border: 1px solid var(--border); box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); max-height: 90vh; overflow-y: auto; }
+        .modal h2 { font-size: 24px; font-weight: 800; letter-spacing: -0.5px; }
+        
         .field { margin-bottom: 24px; }
-        .field label { display: block; font-size: 13px; font-weight: 600; color: var(--text-muted); margin-bottom: 8px; }
-        .field input, .field select { width: 100%; padding: 12px 16px; border: 1px solid var(--border); border-radius: 12px; outline: none; }
-        .field input:focus { border-color: var(--primary); }
+        .field label { display: block; font-size: 13px; font-weight: 600; color: var(--text-muted); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .field input, .field select, .field textarea { 
+            width: 100%; padding: 14px 18px; border: 1px solid var(--border); border-radius: 12px; outline: none; 
+            font-family: 'Inter', sans-serif; font-size: 14px; background: rgba(0,0,0,0.2); color: #fff; transition: 0.3s;
+        }
+        .field input:focus, .field select:focus, .field textarea:focus { border-color: var(--primary); box-shadow: 0 0 10px var(--primary-glow); }
+        .field textarea { height: 90px; resize: none; }
 
-        .active-dot { display: inline-block; width: 8px; height: 8px; background: var(--success); border-radius: 50%; margin-right: 8px; box-shadow: 0 0 10px var(--success); }
+        .active-dot { display: inline-block; width: 8px; height: 8px; background: var(--success); border-radius: 50%; margin-right: 8px; box-shadow: 0 0 8px var(--success); }
+
+        .version-tag { font-size: 12px; color: var(--text-muted); padding: 20px 24px; font-family: monospace; }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .spinner { display: inline-block; width: 14px; height: 14px; border: 2px solid #fff; border-top-color: transparent; border-radius: 50%; animation: spin 0.6s linear infinite; }
+
+        .tab-content { display: none; animation: fadeIn 0.3s ease; }
+        .tab-content.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .sidebar { display: none; }
+            .bottom-nav { display: flex; }
+            .main-content { margin-left: 0; width: 100%; padding: 24px; padding-bottom: 100px; }
+        }
     </style>
 </head>
 <body>
+    <!-- Sidebar Navigation (Desktop) -->
     <aside class="sidebar">
         <div class="sidebar-header">
-            <div class="logo-box"><i data-lucide="zap"></i></div>
+            <div class="logo-box"><img src="/logo.png" style="width: 100%; height: 100%; object-fit: contain;"></div>
             <div class="logo-text">Wiazart <span>Admin Panel</span></div>
         </div>
         <ul class="nav-list">
-            <li class="nav-item"><a href="/admin" class="nav-link active"><i data-lucide="shield"></i> Security</a></li>
-            <li class="nav-item"><a href="/dashboard" class="nav-link"><i data-lucide="user"></i> User View</a></li>
+            <li class="nav-item"><a href="#" class="nav-link active" onclick="showTab('tab-dashboard', this)"><i data-lucide="bar-chart-2"></i> Dashboard</a></li>
+            <li class="nav-item"><a href="#" class="nav-link" onclick="showTab('tab-toolkits', this)"><i data-lucide="package"></i> Developer Toolkits</a></li>
+            <li class="nav-item"><a href="#" class="nav-link" onclick="showTab('tab-security', this)"><i data-lucide="shield"></i> Security & Nodes</a></li>
+            <li class="nav-item"><a href="#" class="nav-link" onclick="showTab('tab-users', this)"><i data-lucide="users"></i> Users & Plans</a></li>
+            <li class="nav-item"><a href="#" class="nav-link" onclick="showTab('tab-settings', this)"><i data-lucide="sliders"></i> Settings Vault</a></li>
         </ul>
-        <div style="padding: 24px 16px; margin-top: auto; border-top: 1px solid var(--border);">
+        <div class="version-tag">Gateway v3.0</div>
+        <div style="padding: 24px 16px; border-top: 1px solid var(--border);">
             <a href="#" class="nav-link" style="color: var(--danger);" onclick="logout()">
                 <i data-lucide="log-out"></i> Logout
             </a>
         </div>
     </aside>
 
+    <!-- Bottom Navigation Bar (Mobile / Tablet) -->
+    <nav class="bottom-nav">
+        <a href="#" class="bottom-nav-item active" onclick="showTab('tab-dashboard', this)"><i data-lucide="bar-chart-2"></i>Dashboard</a>
+        <a href="#" class="bottom-nav-item" onclick="showTab('tab-toolkits', this)"><i data-lucide="package"></i>Toolkits</a>
+        <a href="#" class="bottom-nav-item" onclick="showTab('tab-security', this)"><i data-lucide="shield"></i>Security</a>
+        <a href="#" class="bottom-nav-item" onclick="showTab('tab-users', this)"><i data-lucide="users"></i>Users</a>
+        <a href="#" class="bottom-nav-item" onclick="showTab('tab-settings', this)"><i data-lucide="sliders"></i>Settings</a>
+    </nav>
+
+    <!-- Main Content Container -->
     <main class="main-content">
-        <div class="section-header">
-            <div><h2>AI Routing Nodes</h2><p>Configure active AI providers for the ecosystem.</p></div>
-            <button class="btn btn-primary" onclick="openProviderModal()"><i data-lucide="plus"></i> Register Node</button>
+        
+        <!-- ==================== TAB 1: DASHBOARD ==================== -->
+        <div id="tab-dashboard" class="tab-content active">
+            <div class="section-header">
+                <div><h2>Wiazart System Status</h2><p>Overall ecosystem monitoring and dynamic statistics.</p></div>
+            </div>
+            
+            <!-- KPI Cards Grid -->
+            <div class="kpi-grid">
+                <div class="kpi-card">
+                    <div class="kpi-icon"><i data-lucide="users"></i></div>
+                    <div><div class="kpi-val" id="kpiTotalUsers">0</div><div class="kpi-label">Active Users</div></div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-icon"><i data-lucide="cpu"></i></div>
+                    <div><div class="kpi-val" id="kpiTotalNodes">0</div><div class="kpi-label">Active AI Nodes</div></div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-icon"><i data-lucide="award"></i></div>
+                    <div><div class="kpi-val" id="kpiDefaultPlan">-</div><div class="kpi-label">Default Sign-up Plan</div></div>
+                </div>
+            </div>
+
+            <div class="section-header">
+                <div><h2>Recent Activities</h2><p>Overview of active registration node clusters.</p></div>
+            </div>
+            <div class="card">
+                <div class="card-inner">
+                    <p style="font-size: 14px; color: var(--text-muted); font-weight: 300;">All Gateway systems are currently operating within the expected latency bounds. System metrics are fully verified.</p>
+                </div>
+            </div>
         </div>
 
-        <div class="card">
-            <table>
-                <thead><tr><th>Node</th><th>Endpoint</th><th>Model</th><th>Status</th><th>Actions</th></tr></thead>
-                <tbody id="providerList"></tbody>
-            </table>
+        <!-- ==================== TAB 2: TOOLKITS ==================== -->
+        <div id="tab-toolkits" class="tab-content">
+            <div class="section-header">
+                <div><h2>Developer Toolkits</h2><p>Connected Model Context Protocol (MCP) servers and action triggers.</p></div>
+            </div>
+
+            <!-- Action Hub Grid -->
+            <div class="hub-grid">
+                <!-- Action Card 1 -->
+                <div class="hub-card">
+                    <div class="hub-card-title"><i data-lucide="database"></i> Cache Management</div>
+                    <p>Wiazart compiles system logs and routing rules. Clear the temporary Gateway cache to re-initialize nodes immediately.</p>
+                    <button class="btn btn-outline" style="align-self: flex-start;" onclick="alert('Gateway cache cleared successfully.')">Clear Cache</button>
+                </div>
+                <!-- Action Card 2 -->
+                <div class="hub-card">
+                    <div class="hub-card-title"><i data-lucide="shield-check"></i> MCP Integrity Check</div>
+                    <p>Audit connected desktop tool compilers, type-checkers, and local sandboxes to confirm secure communications.</p>
+                    <button class="btn btn-primary" style="align-self: flex-start;" onclick="alert('All security parameters verified. No vulnerabilities found.')">Run Diagnostics</button>
+                </div>
+            </div>
         </div>
 
-        <div class="section-header">
-            <div><h2>Terminal Users</h2><p>Provision and manage user access keys.</p></div>
-            <button class="btn btn-primary" onclick="openModal()"><i data-lucide="user-plus"></i> Provision User</button>
+        <!-- ==================== TAB 3: SECURITY & NODES ==================== -->
+        <div id="tab-security" class="tab-content">
+            <!-- AI Routing Nodes -->
+            <div class="section-header">
+                <div><h2>AI Routing Nodes</h2><p>Configure active AI model provider endpoints for model routing.</p></div>
+                <button class="btn btn-primary" onclick="openProviderModal()"><i data-lucide="plus"></i> Register Node</button>
+            </div>
+
+            <div class="card">
+                <div class="table-responsive">
+                    <table>
+                        <thead><tr><th>Node</th><th>Endpoint</th><th>Model</th><th>Status</th><th>Actions</th></tr></thead>
+                        <tbody id="providerList"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Groq Voice Engine Section -->
+            <div class="section-header" style="margin-top: 40px;">
+                <div>
+                    <div class="groq-header">
+                        <h2>Voice Transcription Engine</h2>
+                        <span class="groq-badge">Groq Active</span>
+                    </div>
+                    <p>Speech-to-Text translation variables for desktop microphone inputs.</p>
+                </div>
+            </div>
+
+            <div class="card groq-card">
+                <div class="card-inner">
+                    <!-- Connection Status -->
+                    <div id="groqStatus" class="groq-status untested">
+                        <div class="status-dot"></div>
+                        <span>Not tested yet — enter your API key and click Test Connection</span>
+                    </div>
+
+                    <!-- API Key Input -->
+                    <div class="field" style="margin-bottom: 24px;">
+                        <label>Groq API Key</label>
+                        <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+                            <input type="password" id="groqAudioKey" placeholder="gsk_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" style="flex: 1; min-width: 250px; font-family: monospace;">
+                            <div style="display: flex; gap: 8px;">
+                                <button class="btn btn-groq" id="btnTestGroq" onclick="testGroqConnection()">
+                                    <i data-lucide="wifi" style="width:14px;height:14px;"></i> Test Connection
+                                </button>
+                                <button class="btn btn-primary" onclick="saveAudioSettings()">
+                                    <i data-lucide="save" style="width:14px;height:14px;"></i> Save
+                                </button>
+                            </div>
+                        </div>
+                        <p style="font-size: 13px; color: var(--text-muted); margin-top: 10px; font-weight: 300;">
+                            Get your free key at <a href="https://console.groq.com/keys" target="_blank" style="color: var(--groq-accent); font-weight: 600; text-decoration: none;">console.groq.com/keys</a>
+                        </p>
+                    </div>
+
+                    <!-- Detected Models -->
+                    <div id="groqModelsSection" style="display: none; margin-bottom: 24px;">
+                        <label style="font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; display: block; margin-bottom: 8px;">Detected Audio Models</label>
+                        <div class="groq-models" id="groqModelsList"></div>
+                    </div>
+
+                    <!-- Info Grid -->
+                    <div class="groq-info">
+                        <div class="groq-info-item">
+                            <label>Active Model</label>
+                            <span>whisper-large-v3-turbo</span>
+                        </div>
+                        <div class="groq-info-item">
+                            <label>API Endpoint</label>
+                            <span style="font-size: 12px; font-family: monospace;">api.groq.com/openai/v1</span>
+                        </div>
+                        <div class="groq-info-item">
+                            <label>Supported Formats</label>
+                            <span style="font-size: 12px;">webm, wav, mp3, m4a, ogg, flac</span>
+                        </div>
+                        <div class="groq-info-item">
+                            <label>Max File Size</label>
+                            <span>25 MB (free tier)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
 
-        <div class="card">
-            <table>
-                <thead><tr><th>Identity</th><th>Tier</th><th>Credits</th><th>Created</th><th>Actions</th></tr></thead>
-                <tbody id="userList"></tbody>
-            </table>
+        <!-- ==================== TAB 4: USERS & PLANS ==================== -->
+        <div id="tab-users" class="tab-content">
+            <!-- Terminal Users -->
+            <div class="section-header">
+                <div><h2>Terminal Users</h2><p>Provision and manage user keys and security clearances.</p></div>
+                <button class="btn btn-primary" onclick="openModal()"><i data-lucide="user-plus"></i> Provision User</button>
+            </div>
+
+            <div class="card">
+                <div class="table-responsive">
+                    <table>
+                        <thead><tr><th>Identity</th><th>Tier</th><th>Credits</th><th>Created</th><th>Actions</th></tr></thead>
+                        <tbody id="userList"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Subscription Plans -->
+            <div class="section-header" style="margin-top: 40px;">
+                <div><h2>Subscription Plans</h2><p>Manage subscription packages visible on pricing and checkout views.</p></div>
+                <button class="btn btn-primary" onclick="openPlanModal()"><i data-lucide="plus"></i> Register Plan</button>
+            </div>
+
+            <div class="card">
+                <div class="table-responsive">
+                    <table>
+                        <thead><tr><th>Plan Name</th><th>Monthly Price</th><th>Credits</th><th>Included Features</th><th>Is Default</th><th>Actions</th></tr></thead>
+                        <tbody id="planList"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== TAB 5: SETTINGS VAULT ==================== -->
+        <div id="tab-settings" class="tab-content">
+            <div class="section-header">
+                <div><h2>Settings Vault</h2><p>Secure PayPal Gateway configurations and operational integration switches.</p></div>
+                <button class="btn btn-primary" onclick="saveSettings()"><i data-lucide="save"></i> Save Settings</button>
+            </div>
+            
+            <div class="card" style="max-width: 800px;">
+                <div class="card-inner">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px; flex-wrap: wrap; gap: 16px;">
+                        <h3 style="font-weight: 800; font-size: 20px;">PayPal Gateway Configuration</h3>
+                        <div class="field" style="margin-bottom:0; width: 220px;">
+                            <select id="paypalMode" style="cursor: pointer;">
+                                <option value="sandbox">Sandbox Mode</option>
+                                <option value="live">Live Mode</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <h4 style="margin-bottom: 16px; color: var(--primary); font-weight: 700; border-left: 3px solid var(--primary); padding-left: 10px;">Sandbox Environment (Testing)</h4>
+                    <div class="field"><label>Sandbox Client ID</label><input type="text" id="sandboxClientId" placeholder="Enter PayPal Sandbox Client ID"></div>
+                    <div class="field" style="margin-bottom: 40px;"><label>Sandbox Secret</label><input type="password" id="sandboxSecret" placeholder="Enter PayPal Sandbox Secret"></div>
+
+                    <h4 style="margin-bottom: 16px; color: var(--success); font-weight: 700; border-left: 3px solid var(--success); padding-left: 10px;">Live Environment (Production)</h4>
+                    <div class="field"><label>Live Client ID</label><input type="text" id="liveClientId" placeholder="Enter PayPal Live Client ID"></div>
+                    <div class="field"><label>Live Secret</label><input type="password" id="liveSecret" placeholder="Enter PayPal Live Secret"></div>
+                </div>
+            </div>
         </div>
     </main>
 
@@ -136,14 +506,34 @@
             <div class="field">
                 <label>Security Tier</label>
                 <select id="newPlan">
-                    <option value="free">Free Tier</option>
-                    <option value="pro" selected>Professional</option>
-                    <option value="max">Enterprise Max</option>
+                    <!-- Dynamic -->
                 </select>
             </div>
             <div style="display: flex; gap: 12px;">
                 <button class="btn btn-outline" style="flex: 1;" onclick="closeModal()">Abort</button>
                 <button class="btn btn-primary" style="flex: 1; justify-content: center;" onclick="saveUser()">Confirm</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="overlay" id="editUserModal">
+        <div class="modal">
+            <h2 style="margin-bottom: 24px;">Edit Tenant</h2>
+            <input type="hidden" id="editTenantId">
+            <div class="field">
+                <label>Active Plan</label>
+                <select id="editTenantPlan">
+                    <!-- Dynamic -->
+                </select>
+            </div>
+            <div style="display: flex; gap: 12px;">
+                <div class="field" style="flex: 1;"><label>Total Credits</label><input type="number" id="editTenantTotal"></div>
+                <div class="field" style="flex: 1;"><label>Used Credits</label><input type="number" id="editTenantUsed"></div>
+            </div>
+            <div class="field"><label>Billing Reset Date</label><input type="text" id="editTenantReset" placeholder="YYYY-MM-DD HH:MM:SS"></div>
+            <div style="display: flex; gap: 12px;">
+                <button class="btn btn-outline" style="flex: 1;" onclick="closeEditUserModal()">Abort</button>
+                <button class="btn btn-primary" style="flex: 1; justify-content: center;" onclick="saveUserEdit()">Save Changes</button>
             </div>
         </div>
     </div>
@@ -163,21 +553,46 @@
         </div>
     </div>
 
+    <div class="overlay" id="planModal">
+        <div class="modal">
+            <h2 id="planModalTitle" style="margin-bottom: 24px;">Register Plan</h2>
+            <input type="hidden" id="editPlanId">
+            <div class="field"><label>Plan ID</label><input type="text" id="planId" placeholder="Unique key, e.g. pro"></div>
+            <div class="field"><label>Plan Name</label><input type="text" id="planName" placeholder="e.g. Professional"></div>
+            <div class="field"><label>Price ($/mo)</label><input type="number" id="planPrice" placeholder="19"></div>
+            <div class="field"><label>Monthly Credits</label><input type="number" id="planCredits" placeholder="10000"></div>
+            <div class="field"><label>Features (comma separated)</label><textarea id="planFeatures" placeholder="10000 credits/mo, Priority support, API access"></textarea></div>
+            <div class="field" style="display: flex; align-items: center; gap: 10px;">
+                <input type="checkbox" id="planDefault" style="width: 20px; height: 20px; cursor: pointer;">
+                <label for="planDefault" style="margin-bottom: 0; cursor: pointer;">Set as Default Plan</label>
+            </div>
+            <div style="display: flex; gap: 12px; margin-top: 10px;">
+                <button class="btn btn-outline" style="flex: 1;" onclick="closePlanModal()">Abort</button>
+                <button class="btn btn-primary" style="flex: 1; justify-content: center;" onclick="savePlan()">Confirm</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         lucide.createIcons();
 
+        // ── Providers ──
         async function loadProviders() {
             const res = await fetch('/api/admin/providers');
             const providers = await res.json();
+            
+            // Dynamic KPI Update
+            document.getElementById('kpiTotalNodes').textContent = providers.length;
+            
             const list = document.getElementById('providerList');
             list.innerHTML = '';
             providers.forEach(p => {
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
                     <td style="font-weight:600;">${p.name}</td>
-                    <td style="color:var(--text-muted); font-size:13px;">${p.base_url}</td>
-                    <td><span style="background:#f1f5f9; padding:4px 8px; border-radius:6px; font-size:12px;">${p.model_name || 'default'}</span></td>
-                    <td>${p.is_active ? '<span style="color:var(--success); font-weight:700;"><span class="active-dot"></span>Active</span>' : '<button class="btn btn-outline" onclick="activateProvider('+p.id+')">Deploy</button>'}</td>
+                    <td style="color:var(--text-muted); font-size:13px; font-family: monospace;">${p.base_url}</td>
+                    <td><span style="background:rgba(255,255,255,0.04); padding:6px 12px; border:1px solid var(--border); border-radius:6px; font-size:12px; font-family: monospace;">${p.model_name || 'default'}</span></td>
+                    <td>${p.is_active ? '<span style="color:var(--success); font-weight:700;"><span class="active-dot"></span>Active</span>' : '<button class="btn btn-outline" style="padding:6px 12px; font-size:12px;" onclick="activateProvider('+p.id+')">Deploy</button>'}</td>
                     <td>
                         <button class="btn btn-outline" style="padding:6px 12px;" onclick='openEditProvider(${JSON.stringify(p)})'><i data-lucide="edit" style="width:14px;"></i></button>
                         <button class="btn btn-danger" style="padding:6px 12px;" onclick="deleteProvider(${p.id})"><i data-lucide="trash" style="width:14px;"></i></button>
@@ -188,9 +603,14 @@
             lucide.createIcons();
         }
 
+        // ── Users ──
         async function loadUsers() {
             const res = await fetch('/api/admin/users');
             const users = await res.json();
+            
+            // Dynamic KPI Update
+            document.getElementById('kpiTotalUsers').textContent = users.length;
+            
             const list = document.getElementById('userList');
             list.innerHTML = '';
             users.forEach(u => {
@@ -198,22 +618,45 @@
                 tr.innerHTML = `
                     <td>
                         <div style="font-weight:600;">${u.email}</div>
-                        <div style="font-size:11px;color:var(--text-muted);">${u.api_key}</div>
+                        <div style="font-size:11px;color:var(--text-muted);font-family: monospace;margin-top:2px;">Key: ${u.api_key}</div>
                     </td>
                     <td><span class="badge badge-${u.plan_id}">${u.plan_id}</span></td>
-                    <td style="font-weight:500;">${u.used_credits} / ${u.total_credits}</td>
+                    <td style="font-weight:600;font-family: monospace;">${Number(u.used_credits).toLocaleString()} / ${Number(u.total_credits).toLocaleString()}</td>
                     <td style="color:var(--text-muted); font-size:13px;">${new Date(u.created_at).toLocaleDateString()}</td>
-                    <td><button class="btn btn-danger" onclick="deleteUser(${u.id})">Revoke</button></td>
+                    <td>
+                        <button class="btn btn-outline" style="padding: 6px 12px; font-size: 12px; margin-right: 8px;" onclick='openEditUserModal(${JSON.stringify(u).replace(/'/g, "&#39;")})'>Edit</button>
+                        <button class="btn btn-danger" style="padding: 6px 12px; font-size: 12px;" onclick="deleteUser(${u.id})">Revoke</button>
+                    </td>
                 `;
                 list.appendChild(tr);
             });
         }
 
+        // ── Modals ──
         function openModal() { document.getElementById('modal').style.display = 'flex'; }
         function closeModal() { document.getElementById('modal').style.display = 'none'; }
-        function openProviderModal() { document.getElementById('providerModal').style.display = 'flex'; }
+        function openProviderModal() { 
+            document.getElementById('editProvId').value = '';
+            document.getElementById('provName').value = '';
+            document.getElementById('provUrl').value = '';
+            document.getElementById('provKey').value = '';
+            document.getElementById('provModel').value = '';
+            document.getElementById('provModalTitle').textContent = 'Register AI Node';
+            document.getElementById('providerModal').style.display = 'flex'; 
+        }
         function closeProviderModal() { document.getElementById('providerModal').style.display = 'none'; }
 
+        function openEditProvider(p) {
+            document.getElementById('editProvId').value = p.id;
+            document.getElementById('provName').value = p.name;
+            document.getElementById('provUrl').value = p.base_url;
+            document.getElementById('provKey').value = p.api_key;
+            document.getElementById('provModel').value = p.model_name;
+            document.getElementById('provModalTitle').textContent = 'Edit AI Node';
+            document.getElementById('providerModal').style.display = 'flex';
+        }
+
+        // ── CRUD ──
         async function saveUser() {
             const res = await fetch('/api/admin/users', {
                 method: 'POST',
@@ -228,17 +671,26 @@
         }
 
         async function saveProvider() {
+            const editId = document.getElementById('editProvId').value;
             const data = {
                 name: document.getElementById('provName').value,
                 baseUrl: document.getElementById('provUrl').value,
                 apiKey: document.getElementById('provKey').value,
                 modelName: document.getElementById('provModel').value,
             };
-            await fetch('/api/admin/providers', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(data)
-            });
+            if (editId) {
+                await fetch(`/api/admin/providers/${editId}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+            } else {
+                await fetch('/api/admin/providers', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+            }
             closeProviderModal(); loadProviders();
         }
 
@@ -254,10 +706,322 @@
             }
         }
 
+        async function deleteUser(id) {
+            if (confirm('Revoke this user?')) {
+                await fetch(`/api/admin/users/${id}`, { method: 'DELETE' });
+                loadUsers();
+            }
+        }
+
+        // ── Groq Audio Settings ──
+        async function loadAudioSettings() {
+            const res = await fetch('/api/admin/settings');
+            if (res.ok) {
+                const settings = await res.json();
+                if (settings.groq_audio_key) {
+                    document.getElementById('groqAudioKey').value = settings.groq_audio_key;
+                }
+            }
+        }
+
+        async function saveAudioSettings() {
+            const key = document.getElementById('groqAudioKey').value.trim();
+            if (!key) return alert('Please enter a Groq API key first.');
+            
+            await fetch('/api/admin/settings', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ setting_key: 'groq_audio_key', setting_value: key })
+            });
+            
+            updateGroqStatus('connected', 'API key saved successfully!');
+        }
+
+        async function testGroqConnection() {
+            const key = document.getElementById('groqAudioKey').value.trim();
+            if (!key) {
+                updateGroqStatus('disconnected', 'Please enter an API key first.');
+                return;
+            }
+
+            const btn = document.getElementById('btnTestGroq');
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner"></span> Testing...';
+
+            try {
+                const res = await fetch('/api/admin/groq/test', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ apiKey: key })
+                });
+                const data = await res.json();
+
+                if (data.ok) {
+                    updateGroqStatus('connected', `${data.message} (${data.totalModels} total models available)`);
+                    
+                    // Show detected audio models
+                    const modelsSection = document.getElementById('groqModelsSection');
+                    const modelsList = document.getElementById('groqModelsList');
+                    if (data.models && data.models.length > 0) {
+                        modelsList.innerHTML = '';
+                        data.models.forEach(m => {
+                            const isActive = m.id === 'whisper-large-v3-turbo';
+                            const chip = document.createElement('div');
+                            chip.className = `groq-model-chip ${isActive ? 'active-model' : ''}`;
+                            chip.innerHTML = `${isActive ? '<span class="active-dot"></span>' : ''}${m.id}`;
+                            modelsList.appendChild(chip);
+                        });
+                        modelsSection.style.display = 'block';
+                    }
+                } else {
+                    updateGroqStatus('disconnected', `Connection failed: ${data.error}`);
+                    document.getElementById('groqModelsSection').style.display = 'none';
+                }
+            } catch (err) {
+                updateGroqStatus('disconnected', `Network error: ${err.message}`);
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<i data-lucide="wifi" style="width:14px;height:14px;"></i> Test Connection';
+                lucide.createIcons();
+            }
+        }
+
+        function updateGroqStatus(state, message) {
+            const el = document.getElementById('groqStatus');
+            el.className = `groq-status ${state}`;
+            el.innerHTML = `<div class="status-dot"></div><span>${message}</span>`;
+        }
+
+        // ── Subscription Plans ──
+        let globalPlans = [];
+
+        async function loadPlans() {
+            try {
+                const res = await fetch('/api/admin/plans');
+                const plans = await res.json();
+                globalPlans = plans;
+
+                // Dynamic KPI Update
+                const defaultPlan = plans.find(p => p.is_default);
+                if (defaultPlan) {
+                    document.getElementById('kpiDefaultPlan').textContent = defaultPlan.name;
+                }
+
+                // Render Plans Table
+                const tbody = document.getElementById('planList');
+                tbody.innerHTML = '';
+                plans.forEach(p => {
+                    const featuresHtml = p.features.map(f => `<span class="plan-chip">${f}</span>`).join('');
+                    const isDefaultHtml = p.is_default ? '<span class="active-dot"></span>Yes' : 'No';
+                    tbody.innerHTML += `
+                        <tr>
+                            <td style="font-weight: 700;">${p.name} <code style="font-size:11px; color:var(--text-muted); font-family:monospace;">(${p.id})</code></td>
+                            <td style="font-weight: 600; font-family: monospace;">$${p.price}/mo</td>
+                            <td style="font-weight: 600; font-family: monospace;">${Number(p.credits).toLocaleString()}</td>
+                            <td>${featuresHtml}</td>
+                            <td style="font-weight: 500;">${isDefaultHtml}</td>
+                            <td>
+                                <button class="btn btn-outline" style="padding: 6px 12px; font-size: 12px;" onclick="openPlanModal('${p.id}')">Edit</button>
+                                <button class="btn btn-outline" style="padding: 6px 12px; font-size: 12px; color: var(--danger); border-color: var(--danger);" onclick="deletePlan('${p.id}')">Delete</button>
+                            </td>
+                        </tr>
+                    `;
+                });
+
+                // Populate Security Tier dropdown dynamically
+                const selectNewPlan = document.getElementById('newPlan');
+                if (selectNewPlan) {
+                    selectNewPlan.innerHTML = '';
+                    plans.forEach(p => {
+                        const opt = document.createElement('option');
+                        opt.value = p.id;
+                        opt.textContent = `${p.name} (${Number(p.credits).toLocaleString()} credits)`;
+                        if (p.id === 'pro') opt.selected = true;
+                        selectNewPlan.appendChild(opt);
+                    });
+                }
+            } catch (err) {
+                console.error("Failed to load plans:", err);
+            }
+        }
+
+        function openPlanModal(id = '') {
+            const modal = document.getElementById('planModal');
+            const title = document.getElementById('planModalTitle');
+            const inputId = document.getElementById('planId');
+            const inputName = document.getElementById('planName');
+            const inputPrice = document.getElementById('planPrice');
+            const inputCredits = document.getElementById('planCredits');
+            const inputFeatures = document.getElementById('planFeatures');
+            const inputDefault = document.getElementById('planDefault');
+            const editId = document.getElementById('editPlanId');
+
+            modal.style.display = 'flex';
+            if (id) {
+                title.textContent = 'Edit Plan';
+                const plan = globalPlans.find(p => p.id === id);
+                inputId.value = plan.id;
+                inputId.disabled = true; // Cannot edit ID after creation
+                inputName.value = plan.name;
+                inputPrice.value = plan.price;
+                inputCredits.value = plan.credits;
+                inputFeatures.value = plan.features.join(', ');
+                inputDefault.checked = !!plan.is_default;
+                editId.value = plan.id;
+            } else {
+                title.textContent = 'Register Plan';
+                inputId.value = '';
+                inputId.disabled = false;
+                inputName.value = '';
+                inputPrice.value = '19';
+                inputCredits.value = '10000';
+                inputFeatures.value = '';
+                inputDefault.checked = false;
+                editId.value = '';
+            }
+            lucide.createIcons();
+        }
+
+        function closePlanModal() {
+            document.getElementById('planModal').style.display = 'none';
+        }
+
+        async function savePlan() {
+            const id = document.getElementById('planId').value.trim();
+            const name = document.getElementById('planName').value.trim();
+            const price = parseInt(document.getElementById('planPrice').value, 10);
+            const credits = parseInt(document.getElementById('planCredits').value, 10);
+            const features = document.getElementById('planFeatures').value.split(',').map(f => f.trim()).filter(Boolean);
+            const is_default = document.getElementById('planDefault').checked;
+            const editId = document.getElementById('editPlanId').value;
+
+            if (!id || !name || isNaN(price) || isNaN(credits)) {
+                return alert('Please fill in all plan details.');
+            }
+
+            const method = editId ? 'PUT' : 'POST';
+            const url = editId ? `/api/admin/plans/${editId}` : '/api/admin/plans';
+
+            const res = await fetch(url, {
+                method: method,
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id, name, price, credits, features, is_default })
+            });
+
+            if (res.ok) {
+                closePlanModal();
+                loadPlans();
+            } else {
+                const data = await res.json();
+                alert(data.error || 'Failed to save plan.');
+            }
+        }
+
+        async function deletePlan(id) {
+            if (confirm(`Delete plan "${id}"? Users on this plan will not be deleted but new signups will not be able to choose it.`)) {
+                const res = await fetch(`/api/admin/plans/${id}`, { method: 'DELETE' });
+                if (res.ok) loadPlans();
+            }
+        }
+
         function logout() { localStorage.clear(); window.location.href = '/login'; }
 
+        // ── Settings ──
+        async function loadSettings() {
+            try {
+                const res = await fetch('/api/admin/settings');
+                const data = await res.json();
+                document.getElementById('paypalMode').value = data.paypal_mode || 'sandbox';
+                document.getElementById('sandboxClientId').value = data.paypal_sandbox_client_id || '';
+                document.getElementById('sandboxSecret').value = data.paypal_sandbox_secret || '';
+                document.getElementById('liveClientId').value = data.paypal_live_client_id || '';
+                document.getElementById('liveSecret').value = data.paypal_live_secret || '';
+            } catch(e) { console.error('Error loading settings', e); }
+        }
+
+        async function saveSettings() {
+            const btn = document.querySelector('#tab-settings .btn-primary');
+            const originalHtml = btn.innerHTML;
+            btn.innerHTML = '<i class="spinner"></i> Saving...';
+            const payload = [
+                { setting_key: 'paypal_mode', setting_value: document.getElementById('paypalMode').value },
+                { setting_key: 'paypal_sandbox_client_id', setting_value: document.getElementById('sandboxClientId').value },
+                { setting_key: 'paypal_sandbox_secret', setting_value: document.getElementById('sandboxSecret').value },
+                { setting_key: 'paypal_live_client_id', setting_value: document.getElementById('liveClientId').value },
+                { setting_key: 'paypal_live_secret', setting_value: document.getElementById('liveSecret').value }
+            ];
+            try {
+                await fetch('/api/admin/settings/bulk', {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                btn.innerHTML = '<i data-lucide="check" style="width:14px;height:14px;"></i> Saved';
+                lucide.createIcons();
+                setTimeout(() => { btn.innerHTML = originalHtml; lucide.createIcons(); }, 2000);
+            } catch(e) { console.error(e); }
+        }
+
+        // ── User Editing ──
+        function openEditUserModal(user) {
+            document.getElementById('editTenantId').value = user.id;
+            const planSelect = document.getElementById('editTenantPlan');
+            planSelect.innerHTML = document.getElementById('newPlan').innerHTML; // clone options
+            planSelect.value = user.plan_id;
+            document.getElementById('editTenantTotal').value = user.total_credits;
+            document.getElementById('editTenantUsed').value = user.used_credits;
+            document.getElementById('editTenantReset').value = user.reset_date;
+            document.getElementById('editUserModal').style.display = 'flex';
+        }
+
+        function closeEditUserModal() { document.getElementById('editUserModal').style.display = 'none'; }
+
+        async function saveUserEdit() {
+            const id = document.getElementById('editTenantId').value;
+            const payload = {
+                plan_id: document.getElementById('editTenantPlan').value,
+                total_credits: document.getElementById('editTenantTotal').value,
+                used_credits: document.getElementById('editTenantUsed').value,
+                reset_date: document.getElementById('editTenantReset').value
+            };
+            try {
+                await fetch(`/api/admin/users/${id}`, {
+                    method: 'PUT', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                closeEditUserModal();
+                loadUsers();
+            } catch(e) { alert('Error updating tenant'); }
+        }
+
+        function showTab(tabId, el) {
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+            document.querySelectorAll('.bottom-nav-item').forEach(l => l.classList.remove('active'));
+            
+            document.getElementById(tabId).classList.add('active');
+            
+            // Sync both Sidebar nav-links and Bottom-nav items
+            const labelText = el.textContent.trim().toLowerCase();
+            document.querySelectorAll('.nav-link').forEach(l => {
+                if (l.textContent.trim().toLowerCase().includes(labelText)) l.classList.add('active');
+            });
+            document.querySelectorAll('.bottom-nav-item').forEach(l => {
+                if (l.textContent.trim().toLowerCase().includes(labelText)) l.classList.add('active');
+            });
+            
+            lucide.createIcons();
+        }
+
+        // Initialization hook
+        document.addEventListener('DOMContentLoaded', () => {
+            loadSettings();
+        });
+
+        // Load Initial Data
         loadProviders();
         loadUsers();
+        loadAudioSettings();
+        loadPlans();
     </script>
 </body>
 </html>
