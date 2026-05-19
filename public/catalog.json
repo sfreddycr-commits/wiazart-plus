@@ -1,35 +1,155 @@
 {
-  "providers": {
-    "openai": {
+  "version": "2.0.0",
+  "providers": [
+    {
+      "id": "openai",
       "displayName": "OpenAI",
-      "models": [
-        { "name": "gpt-5", "displayName": "GPT 5", "description": "OpenAI's flagship model", "contextWindow": 400000 },
-        { "name": "gpt-5-mini", "displayName": "GPT 5 Mini", "description": "Lightweight but intelligent", "contextWindow": 400000 },
-        { "name": "gpt-4.1", "displayName": "GPT 4.1", "description": "OpenAI's flagship model", "contextWindow": 1047576 },
-        { "name": "gpt-4.1-mini", "displayName": "GPT 4.1 Mini", "description": "Lightweight but intelligent", "contextWindow": 1047576 },
-        { "name": "o4-mini", "displayName": "o4 Mini", "description": "Reasoning model", "contextWindow": 200000 }
-      ]
+      "type": "cloud",
+      "websiteUrl": "https://openai.com",
+      "hasFreeTier": false
     },
-    "anthropic": {
+    {
+      "id": "anthropic",
       "displayName": "Anthropic",
-      "models": [
-        { "name": "claude-sonnet-4-20250514", "displayName": "Claude 4 Sonnet", "description": "Excellent coder", "contextWindow": 200000 },
-        { "name": "claude-3-7-sonnet-latest", "displayName": "Claude 3.7 Sonnet", "description": "Excellent coder", "contextWindow": 200000 },
-        { "name": "claude-3-5-sonnet-20241022", "displayName": "Claude 3.5 Sonnet", "description": "Good coder", "contextWindow": 200000 }
-      ]
+      "type": "cloud",
+      "websiteUrl": "https://anthropic.com",
+      "hasFreeTier": false
     },
-    "google": {
+    {
+      "id": "google",
       "displayName": "Google",
-      "models": [
-        { "name": "gemini-2.5-pro", "displayName": "Gemini 2.5 Pro", "description": "Google's Gemini 2.5 Pro", "contextWindow": 1048576 },
-        { "name": "gemini-2.5-flash", "displayName": "Gemini 2.5 Flash", "description": "Fast and efficient", "contextWindow": 1048576 }
-      ]
-    },
-    "auto": {
-      "displayName": "Wiazart",
-      "models": [
-        { "name": "auto", "displayName": "Auto", "description": "Automatically selects the best model" }
-      ]
+      "type": "cloud",
+      "websiteUrl": "https://ai.google.dev",
+      "hasFreeTier": false
     }
+  ],
+  "modelsByProvider": {
+    "openai": [
+      {
+        "apiName": "gpt-5",
+        "displayName": "GPT-5",
+        "description": "El modelo más potente de OpenAI",
+        "contextWindow": 400000,
+        "dollarSigns": 5
+      },
+      {
+        "apiName": "gpt-5-mini",
+        "displayName": "GPT-5 Mini",
+        "description": "Ligero pero inteligente",
+        "contextWindow": 400000,
+        "dollarSigns": 2
+      },
+      {
+        "apiName": "gpt-4.1",
+        "displayName": "GPT-4.1",
+        "description": "Modelo insignia de OpenAI",
+        "contextWindow": 1047576,
+        "dollarSigns": 4
+      },
+      {
+        "apiName": "gpt-4.1-mini",
+        "displayName": "GPT-4.1 Mini",
+        "description": "Rápido y económico",
+        "contextWindow": 1047576,
+        "dollarSigns": 2
+      },
+      {
+        "apiName": "o4-mini",
+        "displayName": "o4 Mini",
+        "description": "Modelo de razonamiento avanzado",
+        "contextWindow": 200000,
+        "dollarSigns": 3
+      }
+    ],
+    "anthropic": [
+      {
+        "apiName": "claude-sonnet-4-20250514",
+        "displayName": "Claude 4 Sonnet",
+        "description": "Excelente para programar",
+        "contextWindow": 200000,
+        "dollarSigns": 4
+      },
+      {
+        "apiName": "claude-3-7-sonnet-latest",
+        "displayName": "Claude 3.7 Sonnet",
+        "description": "Excelente para programar",
+        "contextWindow": 200000,
+        "dollarSigns": 3
+      },
+      {
+        "apiName": "claude-3-5-sonnet-20241022",
+        "displayName": "Claude 3.5 Sonnet",
+        "description": "Buen equilibrio calidad-precio",
+        "contextWindow": 200000,
+        "dollarSigns": 3
+      }
+    ],
+    "google": [
+      {
+        "apiName": "gemini-2.5-pro",
+        "displayName": "Gemini 2.5 Pro",
+        "description": "El modelo más potente de Google",
+        "contextWindow": 1048576,
+        "dollarSigns": 4
+      },
+      {
+        "apiName": "gemini-2.5-flash",
+        "displayName": "Gemini 2.5 Flash",
+        "description": "Rápido y eficiente",
+        "contextWindow": 1048576,
+        "dollarSigns": 2
+      }
+    ]
+  },
+  "aliases": [
+    {
+      "id": "wiazart/theme-generator/google",
+      "resolvedModel": { "providerId": "google", "apiName": "gemini-2.5-pro" },
+      "displayName": "Google",
+      "purpose": "theme-generation"
+    },
+    {
+      "id": "wiazart/theme-generator/anthropic",
+      "resolvedModel": { "providerId": "anthropic", "apiName": "claude-sonnet-4-20250514" },
+      "displayName": "Anthropic",
+      "purpose": "theme-generation"
+    },
+    {
+      "id": "wiazart/theme-generator/openai",
+      "resolvedModel": { "providerId": "openai", "apiName": "gpt-5" },
+      "displayName": "OpenAI",
+      "purpose": "theme-generation"
+    },
+    {
+      "id": "wiazart/auto/openai",
+      "resolvedModel": { "providerId": "openai", "apiName": "gpt-5" },
+      "displayName": "Auto OpenAI",
+      "purpose": "auto-mode"
+    },
+    {
+      "id": "wiazart/auto/anthropic",
+      "resolvedModel": { "providerId": "anthropic", "apiName": "claude-sonnet-4-20250514" },
+      "displayName": "Auto Anthropic",
+      "purpose": "auto-mode"
+    },
+    {
+      "id": "wiazart/auto/google",
+      "resolvedModel": { "providerId": "google", "apiName": "gemini-2.5-flash" },
+      "displayName": "Auto Google",
+      "purpose": "auto-mode"
+    },
+    {
+      "id": "wiazart/help-bot/default",
+      "resolvedModel": { "providerId": "openai", "apiName": "gpt-5-mini" },
+      "displayName": "Help Bot",
+      "purpose": "help-bot"
+    }
+  ],
+  "curatedSelections": {
+    "themeGenerationOptions": [
+      { "id": "wiazart/theme-generator/google", "label": "Google" },
+      { "id": "wiazart/theme-generator/anthropic", "label": "Anthropic" },
+      { "id": "wiazart/theme-generator/openai", "label": "OpenAI" }
+    ]
   }
 }
