@@ -262,6 +262,7 @@
             content: ''; position: absolute; inset: 0;
             background: linear-gradient(135deg, rgba(124, 58, 237, 0.05), transparent 60%);
             opacity: 0; transition: 0.4s;
+            pointer-events: none;
         }
         .feature-card:hover { 
             transform: translateY(-6px); 
@@ -366,6 +367,7 @@
         </div>
         <ul class="nav-links">
             <li><a href="#features">Superpowers</a></li>
+            <li><a href="#downloads">Downloads</a></li>
             <li><a href="#pricing">Pricing</a></li>
             <li><a href="/login">Docs</a></li>
             <li><a href="/login" class="nav-cta">Login Gateway</a></li>
@@ -380,7 +382,7 @@
             <h1>The magic wand for <br> <span>Fullstack AI Webapps.</span></h1>
             <p>Deploy, execute, and scale dynamic AI applications locally on your machine. Zero vendor lock-in, complete database control, and bank-grade private sandboxes.</p>
             <div style="display: flex; gap: 16px; justify-content: center; flex-wrap: wrap;">
-                <a href="#pricing" class="btn btn-primary"><i data-lucide="zap"></i> Start Free Journey</a>
+                <a href="#downloads" class="btn btn-primary"><i data-lucide="download"></i> Download Desktop App</a>
                 <a href="#features" class="btn btn-outline">Explore Superpowers</a>
             </div>
 
@@ -447,6 +449,45 @@
                     <div class="icon-box"><i data-lucide="map"></i></div>
                     <h3>📋 Multi-Step Planning Mode</h3>
                     <p>Safety and architecture first. Wiazart blocks destructive actions by drafting comprehensive blueprints and questionnaire check-ups, ensuring you approve the implementation steps before coding begins.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Wiazart Desktop Downloads Section -->
+        <section id="downloads" class="features" style="background: radial-gradient(circle at 50% 50%, rgba(14, 165, 233, 0.03), transparent 70%); border-top: 1px solid var(--border-light); margin-top: 40px; padding-top: 100px;">
+            <div class="section-title">
+                <h2>Download Wiazart Desktop</h2>
+                <p>Choose your operating system architecture to install the professional workspace locally.</p>
+            </div>
+            <div class="features-grid" style="grid-template-columns: repeat(3, 1fr);">
+                <!-- Mac Apple Silicon -->
+                <div class="feature-card" style="display: flex; flex-direction: column; justify-content: space-between; align-items: flex-start; min-height: 380px;">
+                    <div>
+                        <div class="icon-box" style="color: var(--primary); background: rgba(124, 58, 237, 0.08);"><i data-lucide="apple"></i></div>
+                        <h3 style="display: flex; align-items: center; gap: 8px;">macOS Silicon <span style="font-size: 11px; padding: 4px 10px; background: rgba(124, 58, 237, 0.15); color: var(--primary); border-radius: 100px; font-weight: 700; text-transform: uppercase;">M1/M2/M3/M4</span></h3>
+                        <p style="margin-top: 12px; margin-bottom: 24px;">Native high-performance package optimized for Apple Silicon processors. Extremely fast boot times and maximum battery efficiency.</p>
+                    </div>
+                    <a href="/downloads/Wiazart.zip" download="Wiazart.zip" target="_blank" class="btn btn-primary" style="width: 100%; justify-content: center; gap: 12px;"><i data-lucide="download"></i> Download for Apple M-Chip</a>
+                </div>
+
+                <!-- Mac Intel -->
+                <div class="feature-card" style="display: flex; flex-direction: column; justify-content: space-between; align-items: flex-start; min-height: 380px;">
+                    <div>
+                        <div class="icon-box" style="color: var(--secondary); background: rgba(14, 165, 233, 0.08);"><i data-lucide="cpu"></i></div>
+                        <h3 style="display: flex; align-items: center; gap: 8px;">macOS Intel <span style="font-size: 11px; padding: 4px 10px; background: rgba(14, 165, 233, 0.15); color: var(--secondary); border-radius: 100px; font-weight: 700; text-transform: uppercase;">Intel x64</span></h3>
+                        <p style="margin-top: 12px; margin-bottom: 24px;">Fully optimized package for Apple computers utilizing Intel Core or Xeon processors. Native support and full security features.</p>
+                    </div>
+                    <a href="/downloads/Wiazart_Mac_Intel.zip" download="Wiazart_Mac_Intel.zip" target="_blank" class="btn btn-outline" style="width: 100%; justify-content: center; gap: 12px; border-color: var(--secondary); color: var(--secondary);"><i data-lucide="download"></i> Download for Intel Mac</a>
+                </div>
+
+                <!-- Windows -->
+                <div class="feature-card" style="display: flex; flex-direction: column; justify-content: space-between; align-items: flex-start; min-height: 380px;">
+                    <div>
+                        <div class="icon-box" style="color: #2563eb; background: rgba(37, 99, 235, 0.08);"><svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" style="display: block;"><path d="M0 3.449L9.75 2.1v9.45H0V3.449zM0 12.45h9.75v9.45L0 20.551v-8.101zM11.25 1.899L24 0v11.55H11.25V1.899zM11.25 12.45H24v11.55l-12.75-1.9v-9.65z"/></svg></div>
+                        <h3 style="display: flex; align-items: center; gap: 8px;">Windows PC <span style="font-size: 11px; padding: 4px 10px; background: rgba(37, 99, 235, 0.15); color: #2563eb; border-radius: 100px; font-weight: 700; text-transform: uppercase;">64-bit</span></h3>
+                        <p style="margin-top: 12px; margin-bottom: 24px;">Portable and stable standalone desktop workstation for Windows 10 and 11 environments. Plug-and-play with Zero configuration required.</p>
+                    </div>
+                    <a href="/downloads/Wiazart_Windows.zip" download="Wiazart_Windows.zip" target="_blank" class="btn btn-outline" style="width: 100%; justify-content: center; gap: 12px; border-color: #2563eb; color: #2563eb;"><i data-lucide="download"></i> Download for Windows</a>
                 </div>
             </div>
         </section>

@@ -213,6 +213,11 @@
                 </a>
             </li>
             <li class="nav-item">
+                <a href="#" class="nav-link" id="btnLaunchWorkspace" style="background: var(--primary); color: #fff; margin-top: 12px; box-shadow: 0 4px 6px rgba(109, 40, 217, 0.2);" onclick="launchWorkspace()">
+                    <i data-lucide="terminal"></i> Launch IDE Web
+                </a>
+            </li>
+            <li class="nav-item">
                 <a href="#" class="nav-link" onclick="showTab('billing', this)">
                     <i data-lucide="credit-card"></i> Billing
                 </a>
@@ -376,9 +381,18 @@
             }, 2000);
         }
 
+        function launchWorkspace() {
+            const token = localStorage.getItem('wiazart_token');
+            if (token) {
+                window.open(`/launch-workspace?token=${token}`, '_blank');
+            } else {
+                window.location.href = '/login';
+            }
+        }
+
         function logout() {
             localStorage.clear();
-            window.location.href = '/login';
+            window.location.href = '/logout-workspace';
         }
 
         loadProfile();

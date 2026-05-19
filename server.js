@@ -12,11 +12,14 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const crypto = require('crypto');
 const multer = require('multer');
+const orchestrator = require('./orchestrator');
 
 const VERSION = "3.0.0";
 const app = express();
 const PORT = process.env.PORT || 3000;
 const JWT_SECRET = process.env.JWT_SECRET || 'wiazart-dashboard-secret-2026';
+
+// Middleware de wildcard eliminado porque causaba error de base de datos
 
 // ─── Groq Configuration Constants ────────────────────────────────────
 const GROQ_API_BASE = 'https://api.groq.com/openai/v1';
@@ -57,6 +60,9 @@ async function initDB() {
     await conn.query(`CREATE TABLE IF NOT EXISTS ai_providers (id INT AUTO_INCREMENT PRIMARY KEY, name VARCHAR(100) NOT NULL, base_url TEXT NOT NULL, api_key TEXT NOT NULL, model_name VARCHAR(100) NOT NULL DEFAULT '', is_active INT NOT NULL DEFAULT 0, created_at TEXT NOT NULL)`);
     await conn.query(`CREATE TABLE IF NOT EXISTS settings (setting_key VARCHAR(50) PRIMARY KEY, setting_value TEXT)`);
     console.log('  ✓ Database tables verified');
+    
+    // Asegurar que la columna de base de datos para multi-tenant existe
+    await orchestrator.ensureOrchestratorSchema(pool);
   } finally { conn.release(); }
 }
 
@@ -317,6 +323,15 @@ app.post(['/v1/chat/completions', '/v1/responses', '/v1/images/generations'], pr
 // ============================================================================
 // WEB SEARCH & CRAWL/FETCH TOOLS (Jina AI Integration)
 // ============================================================================
+const getJinaApiKey = () => {
+  const key = process.env.JINA_API_KEY;
+  if (!key) return null;
+  const clean = key.trim();
+  if (clean === '' || clean === 'undefined' || clean === 'null' || clean.startsWith('YOUR_')) {
+    return null;
+  }
+  return clean;
+};
 
 app.post('/v1/tools/web-search', express.json(), async (req, res) => {
   const { query } = req.body;
@@ -333,11 +348,14 @@ app.post('/v1/tools/web-search', express.json(), async (req, res) => {
 
   try {
     const searchUrl = `https://s.jina.ai/${encodeURIComponent(query)}`;
-    const response = await fetch(searchUrl, {
-      headers: {
-        'Accept': 'text/plain',
-      }
-    });
+    const headers = {
+      'Accept': 'text/plain',
+    };
+    const jinaKey = getJinaApiKey();
+    if (jinaKey) {
+      headers['Authorization'] = `Bearer ${jinaKey}`;
+    }
+    const response = await fetch(searchUrl, { headers });
 
     if (!response.ok) {
       throw new Error(`Jina Search returned status ${response.status}`);
@@ -379,11 +397,14 @@ app.post('/v1/tools/web-crawl', express.json(), async (req, res) => {
 
   try {
     const readerUrl = `https://r.jina.ai/${url}`;
-    const response = await fetch(readerUrl, {
-      headers: {
-        'Accept': 'text/plain',
-      }
-    });
+    const headers = {
+      'Accept': 'text/plain',
+    };
+    const jinaKey = getJinaApiKey();
+    if (jinaKey) {
+      headers['Authorization'] = `Bearer ${jinaKey}`;
+    }
+    const response = await fetch(readerUrl, { headers });
 
     if (!response.ok) {
       throw new Error(`Jina Reader returned status ${response.status}`);
@@ -496,11 +517,25 @@ app.post(['/api/login', '/api/auth/login'], express.json(), async (req, res) => 
       return res.status(401).json({ error: 'Invalid credentials' });
     }
     console.log(`[AUTH] Login successful: ${email}`);
+    
+    // Orquestación dinámica: Obtener o levantar contenedor Docker del usuario
+    let workspacePort = null;
+    try {
+      workspacePort = await orchestrator.getOrCreateWorkspace(pool, user.user_id, user.email);
+      res.setHeader('Set-Cookie', [
+        `wiazart_port=${workspacePort}; Path=/; Domain=.wiazart.com; Max-Age=86400; SameSite=Lax; Secure`,
+        `wiazart_token=${user.api_key}; Path=/; Domain=.wiazart.com; Max-Age=86400; SameSite=Lax; Secure`
+      ]);
+    } catch (e) {
+      console.error('[ORCHESTRATOR] ⚠️ Error al instanciar workspace en login:', e.message);
+    }
+
     const token = jwt.sign({ id: user.id, email: user.email, isAdmin: !!user.is_admin }, JWT_SECRET, { expiresIn: '24h' });
     res.json({
       token,
       api_key: user.api_key,
       user_id: user.user_id,
+      workspace_port: workspacePort,
       user: { id: user.id, email: user.email, isAdmin: !!user.is_admin }
     });
   } catch (err) {
@@ -724,6 +759,54 @@ app.delete('/api/admin/plans/:id', async (req, res) => {
 });
 
 app.get('/api/health', (req, res) => res.json({ status: 'ok', version: VERSION, groqEndpoint: GROQ_API_BASE }));
+
+// Helper de lectura de cookies en Express sin cookie-parser
+function getCookie(req, name) {
+  const value = `; ${req.headers.cookie || ''}`;
+  const parts = value.split(`; ${name}=`);
+  if (parts.length === 2) return parts.pop().split(';').shift();
+  return null;
+}
+
+// Ruta dinámica para lanzar el Workspace personal
+app.get('/launch-workspace', async (req, res) => {
+  const token = req.query.token || getCookie(req, 'wiazart_token');
+  if (!token) {
+    return res.redirect('/login');
+  }
+
+  try {
+    const decoded = jwt.verify(token, JWT_SECRET);
+    const [users] = await pool.query('SELECT * FROM users WHERE id = ?', [decoded.id]);
+    const user = users[0];
+    if (!user) {
+      return res.redirect('/login?error=user_not_found');
+    }
+
+    console.log(`[ORCHESTRATOR] Levantando workspace personal para: ${user.email}`);
+    const workspacePort = await orchestrator.getOrCreateWorkspace(pool, user.user_id, user.email);
+
+    res.setHeader('Set-Cookie', [
+      `wiazart_port=${workspacePort}; Path=/; Domain=.wiazart.com; Max-Age=86400; SameSite=None; Secure`,
+      `wiazart_token=${token}; Path=/; Domain=.wiazart.com; Max-Age=86400; SameSite=None; Secure`
+    ]);
+
+    // Redirigir a la raíz (la cual Nginx enviará al contenedor del usuario)
+    res.redirect('/');
+  } catch (err) {
+    console.error('Launch workspace error:', err);
+    res.redirect('/login?error=session_expired');
+  }
+});
+
+// Ruta para limpiar sesión y cookies (Logout)
+app.get('/logout-workspace', (req, res) => {
+  res.setHeader('Set-Cookie', [
+    'wiazart_port=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT',
+    'wiazart_token=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT'
+  ]);
+  res.redirect('/login');
+});
 
 initDB().then(() => {
   app.listen(PORT, '0.0.0.0', () => {
