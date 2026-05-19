@@ -318,7 +318,73 @@ const proxyToActiveProvider = async (req, res) => {
   }
 };
 
-app.post(['/v1/chat/completions', '/v1/responses', '/v1/images/generations'], proxyToActiveProvider);
+app.post(['/v1/chat/completions', '/v1/responses'], proxyToActiveProvider);
+
+app.post('/v1/images/generations', async (req, res) => {
+  const user = await authenticateApiKey(req);
+  if (!user) return res.status(401).json({ error: 'Unauthorized' });
+
+  const remaining = user.total_credits - user.used_credits;
+  if (!user.is_admin && remaining <= 0) return res.status(402).json({ error: 'No credits remaining' });
+
+  const [[provider]] = await pool.query('SELECT * FROM ai_providers WHERE is_active = 1');
+  if (!provider) return res.status(503).json({ error: 'No active AI provider configured' });
+
+  let targetUrl = `${provider.base_url.replace(/\/$/, '')}/images/generations`;
+  let finalApiKey = provider.api_key;
+  let body = req.body || {};
+  let isMinimax = provider.base_url.includes('minimax');
+
+  // Clean internal options
+  ['wiazart_options', 'wiazartVersionedFiles', 'wiazartFiles', 'wiazartRequestId',
+   'wiazartAppId', 'wiazartDisableFiles', 'wiazartMentionedApps', 'wiazartSmartContextMode'
+  ].forEach(k => delete body[k]);
+
+  if (isMinimax) {
+    targetUrl = `${provider.base_url.replace(/\/$/, '')}/image_generation`;
+    body.model = 'image-01';
+    body.response_format = 'url';
+    if (!body.aspect_ratio) body.aspect_ratio = '1:1';
+  }
+
+  try {
+    const proxyRes = await fetch(targetUrl, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${cleanString(finalApiKey)}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(body)
+    });
+
+    if (!proxyRes.ok) {
+      const errorText = await proxyRes.text();
+      return res.status(proxyRes.status).send(errorText);
+    }
+
+    const jsonRes = await proxyRes.json();
+    let finalRes = jsonRes;
+
+    if (isMinimax && jsonRes.base_resp && jsonRes.base_resp.status_code === 0) {
+      const imageUrls = jsonRes.data?.image_urls || [];
+      if (imageUrls.length > 0) {
+        finalRes = {
+          created: Math.floor(Date.now() / 1000),
+          data: imageUrls.map(url => ({ url }))
+        };
+      }
+    }
+
+    if (!user.is_admin) {
+      await pool.query('UPDATE users SET used_credits = used_credits + 1 WHERE id = ?', [user.id]);
+    }
+
+    res.status(proxyRes.status).json(finalRes);
+  } catch (err) {
+    console.error('[PROXY IMAGE] Error:', err.message);
+    res.status(502).json({ error: 'Proxy error', details: err.message });
+  }
+});
 
 // ============================================================================
 // WEB SEARCH & CRAWL/FETCH TOOLS (Jina AI Integration)
