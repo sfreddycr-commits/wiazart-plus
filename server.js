@@ -834,7 +834,7 @@ function getCookie(req, name) {
   return null;
 }
 
-// Ruta dinámica para lanzar el Workspace personal
+// Ruta para lanzar el Workspace del usuario
 app.get('/launch-workspace', async (req, res) => {
   const token = req.query.token || getCookie(req, 'wiazart_token');
   if (!token) {
@@ -849,16 +849,33 @@ app.get('/launch-workspace', async (req, res) => {
       return res.redirect('/login?error=user_not_found');
     }
 
-    console.log(`[ORCHESTRATOR] Levantando workspace personal para: ${user.email}`);
-    const workspacePort = await orchestrator.getOrCreateWorkspace(pool, user.user_id, user.email);
+    // Impersonation support for admins
+    let targetToken = token;
+    const impersonateApiKey = req.query.impersonateApiKey;
+    if (impersonateApiKey) {
+      if (!user.is_admin) {
+        return res.status(403).send('<h1>Acceso Denegado</h1><p>Solo administradores pueden suplantar usuarios.</p>');
+      }
+      const [targetUsers] = await pool.query('SELECT * FROM users WHERE api_key = ?', [impersonateApiKey]);
+      if (targetUsers.length > 0) {
+        targetToken = targetUsers[0].api_key;
+        console.log(`[WORKSPACE] Admin ${user.email} accediendo como ${targetUsers[0].email}`);
+      } else {
+        return res.status(404).send('<h1>Usuario no encontrado</h1>');
+      }
+    } else {
+      console.log(`[WORKSPACE] Lanzando IDE para: ${user.email} → puerto 9090`);
+    }
+
+    // wiazart-headless always runs on port 9090 (no Docker)
+    const workspacePort = 9090;
 
     res.setHeader('Set-Cookie', [
       `wiazart_port=${workspacePort}; Path=/; Domain=.wiazart.com; Max-Age=86400; SameSite=None; Secure`,
-      `wiazart_token=${token}; Path=/; Domain=.wiazart.com; Max-Age=86400; SameSite=None; Secure`
+      `wiazart_token=${targetToken}; Path=/; Domain=.wiazart.com; Max-Age=86400; SameSite=None; Secure`
     ]);
 
-    // Redirigir a la raíz (la cual Nginx enviará al contenedor del usuario)
-    res.redirect('/');
+    res.redirect('/ide');
   } catch (err) {
     console.error('Launch workspace error:', err);
     res.redirect('/login?error=session_expired');
