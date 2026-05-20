@@ -59,6 +59,7 @@ async function initDB() {
     await conn.query(`CREATE TABLE IF NOT EXISTS users (id INT AUTO_INCREMENT PRIMARY KEY, email VARCHAR(255) UNIQUE NOT NULL, password_hash TEXT NOT NULL, user_id VARCHAR(50) UNIQUE NOT NULL, api_key VARCHAR(100) UNIQUE NOT NULL, plan_id VARCHAR(50) NOT NULL DEFAULT 'free', total_credits INT NOT NULL DEFAULT 1000, used_credits INT NOT NULL DEFAULT 0, is_admin INT NOT NULL DEFAULT 0, reset_date TEXT NOT NULL, created_at TEXT NOT NULL)`);
     await conn.query(`CREATE TABLE IF NOT EXISTS ai_providers (id INT AUTO_INCREMENT PRIMARY KEY, name VARCHAR(100) NOT NULL, base_url TEXT NOT NULL, api_key TEXT NOT NULL, model_name VARCHAR(100) NOT NULL DEFAULT '', is_active INT NOT NULL DEFAULT 0, created_at TEXT NOT NULL)`);
     await conn.query(`CREATE TABLE IF NOT EXISTS settings (setting_key VARCHAR(50) PRIMARY KEY, setting_value TEXT)`);
+    await conn.query(`CREATE TABLE IF NOT EXISTS hosting_domains (id INT AUTO_INCREMENT PRIMARY KEY, domain VARCHAR(255) UNIQUE NOT NULL, target_type VARCHAR(50) NOT NULL DEFAULT 'static', target_value VARCHAR(255) NOT NULL, status VARCHAR(50) DEFAULT 'active', ssl_active INT NOT NULL DEFAULT 0, created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP)`);
     console.log('  ✓ Database tables verified');
     
     // Asegurar que la columna de base de datos para multi-tenant existe
@@ -889,6 +890,355 @@ app.get('/logout-workspace', (req, res) => {
     'wiazart_token=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT'
   ]);
   res.redirect('/login');
+});
+
+// ============================================================================
+// WIAZART HOSTING — Control Panel APIs (PowerDNS, Poste.io, Nginx & Certbot)
+// ============================================================================
+const { exec } = require('child_process');
+const fs = require('fs');
+
+// Helper de comandos para base de datos SQLite de correos
+const MAIL_DB = '/opt/mailserver/data/users.db';
+
+// 1. Services Status API
+app.get('/api/hosting/services', async (req, res) => {
+  const services = ['pdns', 'postfix', 'nginx', 'dovecot'];
+  const status = {};
+  
+  const checkService = (service) => {
+    return new Promise((resolve) => {
+      if (service === 'dovecot' || service === 'postfix') {
+        // En poste.io, postfix y dovecot corren bajo supervisorctl
+        exec(`docker exec -i poste_mailserver supervisorctl status ${service}`, (err, stdout) => {
+          const out = stdout.toLowerCase();
+          status[service] = out.includes('running') ? 'active' : 'inactive';
+          resolve();
+        });
+      } else if (service === 'pdns') {
+        exec(`docker inspect -f '{{.State.Status}}' pdns`, (err, stdout) => {
+          const state = stdout.trim();
+          status[service] = state === 'running' ? 'active' : 'inactive';
+          resolve();
+        });
+      } else {
+        exec(`systemctl is-active ${service}`, (err, stdout) => {
+          const state = stdout.trim();
+          status[service] = (state === 'active' || state === 'activating') ? 'active' : 'inactive';
+          resolve();
+        });
+      }
+    });
+  };
+  
+  try {
+    await Promise.all(services.map(checkService));
+    res.json(status);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// 2. Live Logs API
+app.get('/api/hosting/logs/:service', async (req, res) => {
+  const service = req.params.service;
+  let cmd = '';
+  
+  if (service === 'nginx') {
+    cmd = 'tail -n 100 /var/log/nginx/error.log';
+  } else if (service === 'pdns') {
+    cmd = 'docker logs --tail 100 pdns';
+  } else if (service === 'mailserver') {
+    cmd = 'docker logs --tail 100 poste_mailserver';
+  } else {
+    return res.status(400).json({ error: 'Servicio inválido' });
+  }
+  
+  exec(cmd, (err, stdout, stderr) => {
+    res.json({ logs: stdout || stderr || 'Sin logs disponibles' });
+  });
+});
+
+// 3. Cuentas de Correo - Listar
+app.get('/api/hosting/emails', async (req, res) => {
+  const cmd = `sqlite3 -json ${MAIL_DB} "SELECT address, username, domainName, name, disabled, quota FROM users"`;
+  exec(cmd, (err, stdout, stderr) => {
+    if (err) return res.status(500).json({ error: stderr || err.message });
+    let rows = [];
+    if (stdout.trim()) {
+      try { rows = JSON.parse(stdout); } catch(e) {}
+    }
+    res.json(rows);
+  });
+});
+
+// 3. Cuentas de Correo - Crear
+app.post('/api/hosting/emails', express.json(), async (req, res) => {
+  const { email, password, name } = req.body;
+  if (!email || !password) return res.status(400).json({ error: 'Email y contraseña requeridos' });
+  
+  const [username, domain] = email.split('@');
+  if (!username || !domain) return res.status(400).json({ error: 'Formato de correo inválido' });
+  
+  try {
+    const insDomainCmd = `sqlite3 ${MAIL_DB} "INSERT OR IGNORE INTO domains (name, created, updated, disabled) VALUES ('${domain}', datetime('now'), datetime('now'), 0)"`;
+    await new Promise((resolve, reject) => {
+      exec(insDomainCmd, (err, stdout, stderr) => {
+        if (err) reject(new Error(stderr || err.message));
+        else resolve();
+      });
+    });
+    
+    const hashCmd = `docker exec -i poste_mailserver doveadm pw -s SHA512-CRYPT -p "${password}"`;
+    const hash = await new Promise((resolve, reject) => {
+      exec(hashCmd, (err, stdout, stderr) => {
+        if (err) reject(new Error(stderr || err.message));
+        else resolve(stdout.trim());
+      });
+    });
+    
+    const homePath = `/data/domains/${domain}/${username}`;
+    const insUserCmd = `sqlite3 ${MAIL_DB} "INSERT INTO users (address, username, password, home, uid, gid, name, disabled, domainAdmin, superAdmin, strictFromDisabled, created, discard, internalOnly, quota, domainName) VALUES ('${email}', '${username}', '${hash}', '${homePath}', 88, 88, '${name || username}', 0, 0, 0, 0, datetime('now'), 0, 0, 0, '${domain}')"`;
+    
+    await new Promise((resolve, reject) => {
+      exec(insUserCmd, (err, stdout, stderr) => {
+        if (err) reject(new Error(stderr || err.message));
+        else resolve();
+      });
+    });
+    
+    res.json({ ok: true, message: 'Cuenta de correo creada exitosamente' });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// 3. Cuentas de Correo - Eliminar
+app.delete('/api/hosting/emails', express.json(), async (req, res) => {
+  const { email } = req.body;
+  if (!email) return res.status(400).json({ error: 'Email requerido' });
+  
+  const cmd = `sqlite3 ${MAIL_DB} "DELETE FROM users WHERE address = '${email}'"`;
+  exec(cmd, (err, stdout, stderr) => {
+    if (err) return res.status(500).json({ error: stderr || err.message });
+    res.json({ ok: true, message: 'Cuenta de correo eliminada exitosamente' });
+  });
+});
+
+// 4. Dominios - Listar
+app.get('/api/hosting/domains', async (req, res) => {
+  try {
+    const [rows] = await pool.query('SELECT * FROM hosting_domains ORDER BY created_at DESC');
+    res.json(rows);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// 4. Dominios - Crear
+app.post('/api/hosting/domains', express.json(), async (req, res) => {
+  const { domain, targetType, targetValue } = req.body;
+  if (!domain || !targetType || !targetValue) {
+    return res.status(400).json({ error: 'Faltan parámetros requeridos (domain, targetType, targetValue)' });
+  }
+  
+  try {
+    await pool.query(
+      'INSERT INTO hosting_domains (domain, target_type, target_value, status) VALUES (?, ?, ?, ?)',
+      [domain, targetType, targetValue, 'active']
+    );
+    
+    const createZoneCmd = `docker exec -i pdns pdnsutil create-zone ${domain} ns1.wiazart.com`;
+    await new Promise((resolve) => {
+      exec(createZoneCmd, () => resolve());
+    });
+    
+    const records = [
+      `docker exec -i pdns pdnsutil add-record ${domain} @ A 3600 187.124.151.78`,
+      `docker exec -i pdns pdnsutil add-record ${domain} * A 3600 187.124.151.78`,
+      `docker exec -i pdns pdnsutil add-record ${domain} @ NS 3600 ns1.wiazart.com.`,
+      `docker exec -i pdns pdnsutil add-record ${domain} @ NS 3600 ns2.wiazart.com.`,
+      `docker exec -i pdns pdnsutil add-record ${domain} @ MX 3600 "10 mail.wiazart.com."`
+    ];
+    
+    for (const recordCmd of records) {
+      await new Promise((resolve) => exec(recordCmd, () => resolve()));
+    }
+    
+    const sitesAvailablePath = `/etc/nginx/sites-available/${domain}`;
+    const sitesEnabledPath = `/etc/nginx/sites-enabled/${domain}`;
+    let nginxConfig = '';
+    
+    if (targetType === 'static') {
+      nginxConfig = `server {
+    listen 80;
+    server_name ${domain} www.${domain};
+    root ${targetValue};
+    index index.html;
+    location / {
+        try_files $uri $uri/ /index.html;
+    }
+}`;
+    } else {
+      nginxConfig = `server {
+    listen 80;
+    server_name ${domain} www.${domain};
+    location / {
+        proxy_pass http://127.0.0.1:${targetValue};
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    }
+}`;
+    }
+    
+    fs.writeFileSync(sitesAvailablePath, nginxConfig);
+    
+    if (!fs.existsSync(sitesEnabledPath)) {
+      fs.symlinkSync(sitesAvailablePath, sitesEnabledPath);
+    }
+    
+    exec('systemctl reload nginx');
+    
+    res.json({ ok: true, message: 'Dominio creado y configurado con éxito' });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// 4. Dominios - Eliminar
+app.delete('/api/hosting/domains', express.json(), async (req, res) => {
+  const { domain } = req.body;
+  if (!domain) return res.status(400).json({ error: 'Dominio requerido' });
+  
+  try {
+    await pool.query('DELETE FROM hosting_domains WHERE domain = ?', [domain]);
+    
+    exec(`docker exec -i pdns pdnsutil delete-zone ${domain}`);
+    
+    const sitesAvailablePath = `/etc/nginx/sites-available/${domain}`;
+    const sitesEnabledPath = `/etc/nginx/sites-enabled/${domain}`;
+    
+    if (fs.existsSync(sitesEnabledPath)) fs.unlinkSync(sitesEnabledPath);
+    if (fs.existsSync(sitesAvailablePath)) fs.unlinkSync(sitesAvailablePath);
+    
+    exec('systemctl reload nginx');
+    
+    res.json({ ok: true, message: 'Dominio eliminado exitosamente' });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// 5. Gestión de Registros DNS Granulares
+app.get('/api/hosting/dns-records/:domain', async (req, res) => {
+  const domain = req.params.domain;
+  const cmd = `docker exec -i pdns pdnsutil show-zone ${domain}`;
+  
+  exec(cmd, (err, stdout, stderr) => {
+    if (err) return res.status(500).json({ error: stderr || err.message });
+    
+    const lines = stdout.split('\n');
+    const records = [];
+    
+    lines.forEach(line => {
+      const trimmed = line.trim();
+      if (!trimmed || trimmed.startsWith('This zone') || trimmed.startsWith('Zone')) return;
+      
+      const tokens = trimmed.split(/\s+/);
+      if (tokens.length < 5) return;
+      
+      const name = tokens[0];
+      const ttl = tokens[1];
+      const type = tokens[3];
+      const content = tokens.slice(4).join(' ');
+      
+      records.push({ name, ttl, type, content });
+    });
+    
+    res.json(records);
+  });
+});
+
+app.post('/api/hosting/dns-records', express.json(), async (req, res) => {
+  const { domain, name, type, content, ttl } = req.body;
+  if (!domain || !name || !type || !content) {
+    return res.status(400).json({ error: 'Faltan parámetros requeridos' });
+  }
+  
+  const cmd = `docker exec -i pdns pdnsutil add-record ${domain} ${name} ${type} ${ttl || 3600} "${content}"`;
+  exec(cmd, (err, stdout, stderr) => {
+    if (err) return res.status(500).json({ error: stderr || err.message });
+    res.json({ ok: true, message: 'Registro DNS añadido con éxito' });
+  });
+});
+
+app.delete('/api/hosting/dns-records', express.json(), async (req, res) => {
+  const { domain, name, type } = req.body;
+  if (!domain || !name || !type) {
+    return res.status(400).json({ error: 'Faltan parámetros requeridos' });
+  }
+  
+  const cmd = `docker exec -i pdns pdnsutil delete-rrset ${domain} ${name} ${type}`;
+  exec(cmd, (err, stdout, stderr) => {
+    if (err) return res.status(500).json({ error: stderr || err.message });
+    res.json({ ok: true, message: 'Registro DNS eliminado con éxito' });
+  });
+});
+
+// 6. Certbot SSL API
+app.post('/api/hosting/ssl', express.json(), async (req, res) => {
+  const { domain } = req.body;
+  if (!domain) return res.status(400).json({ error: 'Dominio requerido' });
+  
+  const cmd = `certbot --nginx -d ${domain} -d www.${domain} --non-interactive --agree-tos -m admin@wiazart.com`;
+  
+  exec(cmd, async (err, stdout, stderr) => {
+    if (err) {
+      console.error('[SSL-ERROR]', stderr || err.message);
+      return res.status(500).json({ error: stderr || err.message });
+    }
+    
+    try {
+      await pool.query('UPDATE hosting_domains SET ssl_active = 1 WHERE domain = ?', [domain]);
+      res.json({ ok: true, message: 'Certificado SSL Let\'s Encrypt configurado con éxito' });
+    } catch(dbErr) {
+      res.status(500).json({ error: dbErr.message });
+    }
+  });
+});
+
+// 7. Ping / Health Probing ("Hearts")
+app.get('/api/hosting/status', async (req, res) => {
+  try {
+    const [domains] = await pool.query('SELECT domain FROM hosting_domains');
+    const results = {};
+    
+    const probeDomain = (d) => {
+      return new Promise((resolve) => {
+        exec(`curl -o /dev/null -s -w "%{http_code}:%{time_total}" -m 3 "http://${d.domain}/"`, (err, stdout) => {
+          const parts = stdout.trim().split(':');
+          const code = parseInt(parts[0]) || 0;
+          const time = parseFloat(parts[1]) || 0;
+          
+          results[d.domain] = {
+            online: code > 0 && code < 500,
+            code,
+            time: Math.round(time * 1000)
+          };
+          resolve();
+        });
+      });
+    };
+    
+    await Promise.all(domains.map(probeDomain));
+    res.json(results);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
 initDB().then(() => {

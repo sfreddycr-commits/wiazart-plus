@@ -259,6 +259,224 @@
             .bottom-nav { display: flex; }
             .main-content { margin-left: 0; width: 100%; padding: 24px; padding-bottom: 100px; }
         }
+
+        /* ── Wiazart Hosting Panel Styles ── */
+        .hosting-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 28px;
+            margin-bottom: 36px;
+        }
+        .hosting-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.02);
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        .hosting-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 35px rgba(124, 58, 237, 0.03);
+        }
+        .hosting-card-header {
+            padding: 24px 28px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.015);
+        }
+        .hosting-card-header h3 {
+            font-size: 18px;
+            font-weight: 800;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .hosting-card-header h3 i {
+            color: var(--primary);
+        }
+        .hosting-card-body {
+            padding: 28px;
+        }
+        
+        /* Pulse Animation for Hearts and Services */
+        @keyframes pulse-heart {
+            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); }
+            70% { transform: scale(1.06); box-shadow: 0 0 0 8px rgba(16, 185, 129, 0); }
+            100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+        }
+        @keyframes pulse-heart-red {
+            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); }
+            70% { transform: scale(1.06); box-shadow: 0 0 0 8px rgba(239, 68, 68, 0); }
+            100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+        }
+        
+        .heart-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 20px;
+            margin-bottom: 32px;
+        }
+        .heart-card {
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 14px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        .heart-card:hover {
+            transform: translateY(-4px);
+            background: rgba(255, 255, 255, 0.85);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.04);
+            border-color: rgba(124, 58, 237, 0.15);
+        }
+        .heart-node {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff;
+            font-size: 18px;
+            transition: all 0.3s ease;
+        }
+        .heart-node.online {
+            background: linear-gradient(135deg, #10b981, #059669);
+            animation: pulse-heart 2s infinite;
+        }
+        .heart-node.offline {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            animation: pulse-heart-red 1.5s infinite;
+        }
+        .heart-domain-name {
+            font-weight: 700;
+            font-size: 14px;
+            color: var(--text-main);
+            word-break: break-all;
+        }
+        .heart-domain-meta {
+            font-size: 11px;
+            color: var(--text-muted);
+            font-weight: 500;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        /* Services Grid styles */
+        .services-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        .service-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 20px;
+            background: rgba(0, 0, 0, 0.015);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            transition: 0.2s;
+        }
+        .service-item:hover {
+            background: rgba(0, 0, 0, 0.03);
+            border-color: rgba(124, 58, 237, 0.1);
+        }
+        .service-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .service-name {
+            font-weight: 700;
+            font-size: 14px;
+            color: var(--text-main);
+        }
+        .service-status-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 10px;
+            border-radius: 100px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+        .service-status-pill.active {
+            background: rgba(16, 185, 129, 0.08);
+            color: #10b981;
+            border: 1px solid rgba(16, 185, 129, 0.15);
+        }
+        .service-status-pill.inactive {
+            background: rgba(239, 68, 68, 0.08);
+            color: #ef4444;
+            border: 1px solid rgba(239, 68, 68, 0.15);
+        }
+        
+        /* Terminal / Log Viewer styles */
+        .terminal-container {
+            background: #0f172a;
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.5);
+            padding: 20px;
+            font-family: monospace;
+            font-size: 12px;
+            line-height: 1.6;
+            color: #38bdf8;
+            max-height: 350px;
+            overflow-y: auto;
+            position: relative;
+        }
+        .terminal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-bottom: 12px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            margin-bottom: 14px;
+        }
+        .terminal-dots {
+            display: flex;
+            gap: 6px;
+        }
+        .terminal-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+        .terminal-dot.red { background: #ef4444; }
+        .terminal-dot.yellow { background: #f59e0b; }
+        .terminal-dot.green { background: #10b981; }
+        .terminal-title {
+            color: #94a3b8;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .terminal-content {
+            white-space: pre-wrap;
+            word-break: break-all;
+            color: #f1f5f9;
+        }
+        .terminal-content span.dim { color: #64748b; }
+        .terminal-content span.highlight { color: #38bdf8; }
+        .terminal-content span.success { color: #4ade80; }
+        .terminal-content span.error { color: #f87171; }
     </style>
 </head>
 <body>
@@ -271,6 +489,7 @@
         <ul class="nav-list">
             <li class="nav-item"><a href="#" class="nav-link active" onclick="showTab('tab-dashboard', this)"><i data-lucide="bar-chart-2"></i> Dashboard</a></li>
             <li class="nav-item"><a href="#" class="nav-link" onclick="showTab('tab-toolkits', this)"><i data-lucide="package"></i> Developer Toolkits</a></li>
+            <li class="nav-item"><a href="#" class="nav-link" onclick="showTab('tab-hosting', this)"><i data-lucide="cloud"></i> Wiazart Hosting</a></li>
             <li class="nav-item"><a href="#" class="nav-link" onclick="showTab('tab-security', this)"><i data-lucide="shield"></i> Security & Nodes</a></li>
             <li class="nav-item"><a href="#" class="nav-link" onclick="showTab('tab-users', this)"><i data-lucide="users"></i> Users & Plans</a></li>
             <li class="nav-item"><a href="#" class="nav-link" onclick="showTab('tab-settings', this)"><i data-lucide="sliders"></i> Settings Vault</a></li>
@@ -287,6 +506,7 @@
     <nav class="bottom-nav">
         <a href="#" class="bottom-nav-item active" onclick="showTab('tab-dashboard', this)"><i data-lucide="bar-chart-2"></i>Dashboard</a>
         <a href="#" class="bottom-nav-item" onclick="showTab('tab-toolkits', this)"><i data-lucide="package"></i>Toolkits</a>
+        <a href="#" class="bottom-nav-item" onclick="showTab('tab-hosting', this)"><i data-lucide="cloud"></i>Hosting</a>
         <a href="#" class="bottom-nav-item" onclick="showTab('tab-security', this)"><i data-lucide="shield"></i>Security</a>
         <a href="#" class="bottom-nav-item" onclick="showTab('tab-users', this)"><i data-lucide="users"></i>Users</a>
         <a href="#" class="bottom-nav-item" onclick="showTab('tab-settings', this)"><i data-lucide="sliders"></i>Settings</a>
@@ -496,6 +716,112 @@
                 </div>
             </div>
         </div>
+
+        <!-- ==================== TAB: WIAZART HOSTING ==================== -->
+        <div id="tab-hosting" class="tab-content">
+            <div class="section-header">
+                <div>
+                    <h2>Wiazart Hosting Control Center</h2>
+                    <p>Manage domains, DNS records, corporate mailboxes, and VPS infrastructure status.</p>
+                </div>
+                <div style="display: flex; gap: 12px;">
+                    <button class="btn btn-outline" onclick="loadHostingDashboard()"><i data-lucide="refresh-cw"></i> Refresh All</button>
+                    <button class="btn btn-primary" onclick="openAddDomainModal()"><i data-lucide="plus"></i> Add Domain</button>
+                </div>
+            </div>
+
+            <!-- Heartbeats Section -->
+            <div class="card">
+                <div class="card-inner" style="padding-bottom: 16px;">
+                    <h3 style="font-weight: 800; font-size: 20px; margin-bottom: 6px; display: flex; align-items: center; gap: 8px;">
+                        <i data-lucide="activity" style="color: var(--primary);"></i> Domain Health Probes ("Hearts")
+                    </h3>
+                    <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 24px;">Dynamic health check indicators showing live HTTP status and response times.</p>
+                    <div id="heartGrid" class="heart-grid">
+                        <!-- Dynamic Heart Nodes go here -->
+                        <div style="grid-column: 1/-1; text-align: center; padding: 40px; color: var(--text-muted);">
+                            <i class="spinner" style="border-color: var(--primary); border-top-color: transparent; margin-bottom: 12px; width: 24px; height: 24px; border-width: 3px;"></i>
+                            <div>Probing domain nodes...</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Two-Column Grid: Services & Emails -->
+            <div class="hosting-grid">
+                <!-- Infrastructure Services Status -->
+                <div class="hosting-card">
+                    <div class="hosting-card-header">
+                        <h3><i data-lucide="server"></i> Infrastructure Services</h3>
+                        <span class="badge badge-pro">Systemd & Docker</span>
+                    </div>
+                    <div class="hosting-card-body">
+                        <div class="services-list" id="servicesList">
+                            <!-- Dynamic Services go here -->
+                            <div style="text-align: center; padding: 20px; color: var(--text-muted);">Loading system services...</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Corporate Mailboxes -->
+                <div class="hosting-card">
+                    <div class="hosting-card-header">
+                        <h3><i data-lucide="mail"></i> Corporate Email Accounts</h3>
+                        <button class="btn btn-outline" style="padding: 6px 12px; font-size: 12px;" onclick="openAddEmailModal()"><i data-lucide="plus"></i> Create Mailbox</button>
+                    </div>
+                    <div class="hosting-card-body" style="padding: 0; max-height: 380px; overflow-y: auto;">
+                        <div class="table-responsive">
+                            <table style="min-width: 100%;">
+                                <thead>
+                                    <tr>
+                                        <th style="padding: 12px 20px;">Address</th>
+                                        <th style="padding: 12px 20px;">Owner</th>
+                                        <th style="padding: 12px 20px; text-align: right;">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="emailList">
+                                    <tr>
+                                        <td colspan="3" style="text-align: center; padding: 40px; color: var(--text-muted);">Loading email accounts...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Domains & Subdomains Table -->
+            <div class="card">
+                <div class="card-inner" style="padding: 0;">
+                    <div style="padding: 32px 32px 16px 32px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
+                        <div>
+                            <h3 style="font-weight: 800; font-size: 20px; margin-bottom: 4px;">Virtual Hosts & Domains</h3>
+                            <p style="color: var(--text-muted); font-size: 14px;">Active reverse proxy and static site configurations generated for Nginx.</p>
+                        </div>
+                        <button class="btn btn-primary" onclick="openAddDomainModal()"><i data-lucide="plus"></i> New Domain</button>
+                    </div>
+                    <div class="table-responsive">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Domain Name</th>
+                                    <th>Routing Type</th>
+                                    <th>Target Value</th>
+                                    <th>SSL Status</th>
+                                    <th>Status</th>
+                                    <th style="text-align: right;">Control Panel Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="domainsList">
+                                <tr>
+                                    <td colspan="6" style="text-align: center; padding: 40px; color: var(--text-muted);">Loading active domains...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
     </main>
 
     <!-- Modals -->
@@ -571,6 +897,138 @@
             <div style="display: flex; gap: 12px; margin-top: 10px;">
                 <button class="btn btn-outline" style="flex: 1;" onclick="closePlanModal()">Abort</button>
                 <button class="btn btn-primary" style="flex: 1; justify-content: center;" onclick="savePlan()">Confirm</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Wiazart Hosting Modals -->
+    <!-- Modal 1: Add Domain -->
+    <div class="overlay" id="addDomainModal">
+        <div class="modal">
+            <h2 style="margin-bottom: 24px; display: flex; align-items: center; gap: 8px;"><i data-lucide="globe" style="color: var(--primary);"></i> Add Virtual Host</h2>
+            <div class="field">
+                <label>Domain Name</label>
+                <input type="text" id="hostingDomainName" placeholder="e.g. app.mycompany.com" required>
+            </div>
+            <div class="field">
+                <label>Routing Type</label>
+                <select id="hostingTargetType" onchange="toggleHostingTargetType()" style="cursor: pointer;">
+                    <option value="static">Static Web Directory (HTML/JS)</option>
+                    <option value="proxy">Local Port Redirect (Reverse Proxy)</option>
+                </select>
+            </div>
+            <div class="field">
+                <label id="hostingTargetLabel">Document Root Path</label>
+                <input type="text" id="hostingTargetValue" placeholder="/var/www/html/dist" required>
+            </div>
+            <div style="display: flex; gap: 12px; margin-top: 32px;">
+                <button class="btn btn-outline" style="flex: 1;" onclick="closeAddDomainModal()">Abort</button>
+                <button class="btn btn-primary" style="flex: 1; justify-content: center;" onclick="saveHostingDomain()">Deploy VHost</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal 2: Create Email -->
+    <div class="overlay" id="addEmailModal">
+        <div class="modal">
+            <h2 style="margin-bottom: 24px; display: flex; align-items: center; gap: 8px;"><i data-lucide="mail" style="color: var(--primary);"></i> Create Corporate Mailbox</h2>
+            <div class="field">
+                <label>Email Address</label>
+                <input type="email" id="emailAddress" placeholder="username@domain.com" required>
+            </div>
+            <div class="field">
+                <label>Owner Name</label>
+                <input type="text" id="emailName" placeholder="e.g. CEO Office" required>
+            </div>
+            <div class="field">
+                <label>Password</label>
+                <div style="position: relative; display: flex; gap: 8px;">
+                    <input type="text" id="emailPassword" placeholder="Secure account password" style="flex: 1;" required>
+                    <button class="btn btn-outline" style="padding: 10px 14px;" onclick="generateSecureEmailPass()"><i data-lucide="key"></i></button>
+                </div>
+            </div>
+            <div style="display: flex; gap: 12px; margin-top: 32px;">
+                <button class="btn btn-outline" style="flex: 1;" onclick="closeAddEmailModal()">Abort</button>
+                <button class="btn btn-primary" style="flex: 1; justify-content: center;" onclick="saveEmailAccount()">Create Mailbox</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal 3: DNS Record Manager -->
+    <div class="overlay" id="dnsRecordsModal">
+        <div class="modal" style="width: 780px; max-width: 95vw;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+                <h2 style="display: flex; align-items: center; gap: 8px;"><i data-lucide="dns" style="color: var(--primary); width:24px; height:24px;"></i> DNS Zone: <span id="dnsActiveDomain" style="color: var(--primary);">domain.com</span></h2>
+                <button class="btn btn-outline" style="padding: 6px 12px;" onclick="closeDnsRecordsModal()"><i data-lucide="x"></i> Close</button>
+            </div>
+            
+            <!-- Add DNS Record Inline Form -->
+            <div style="background: rgba(0,0,0,0.015); border: 1px solid var(--border); border-radius: 16px; padding: 20px; margin-bottom: 24px;">
+                <h4 style="margin-bottom: 12px; font-weight: 700; font-size: 14px; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.5px;">Add New DNS Record</h4>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 12px; align-items: end;">
+                    <div class="field" style="margin-bottom: 0;"><label style="font-size:11px;">Record Name</label><input type="text" id="dnsRecordName" placeholder="@ or sub" style="padding:10px 14px;"></div>
+                    <div class="field" style="margin-bottom: 0;">
+                        <label style="font-size:11px;">Type</label>
+                        <select id="dnsRecordType" style="padding:10px 14px; cursor: pointer;">
+                            <option value="A">A (IPv4 Address)</option>
+                            <option value="AAAA">AAAA (IPv6 Address)</option>
+                            <option value="CNAME">CNAME (Alias)</option>
+                            <option value="MX">MX (Mail Exchange)</option>
+                            <option value="TXT">TXT (Text Record)</option>
+                            <option value="NS">NS (Name Server)</option>
+                            <option value="SRV">SRV (Service locator)</option>
+                        </select>
+                    </div>
+                    <div class="field" style="margin-bottom: 0; grid-column: span 2;"><label style="font-size:11px;">Content / Value</label><input type="text" id="dnsRecordContent" placeholder="187.124.151.78 or server." style="padding:10px 14px;"></div>
+                    <div class="field" style="margin-bottom: 0;"><label style="font-size:11px;">TTL (Secs)</label><input type="number" id="dnsRecordTtl" value="3600" style="padding:10px 14px;"></div>
+                    <button class="btn btn-primary" style="padding: 11px; height: 43px; justify-content: center;" onclick="addDnsRecord()"><i data-lucide="plus"></i> Add</button>
+                </div>
+            </div>
+
+            <div class="table-responsive" style="max-height: 300px; overflow-y: auto;">
+                <table style="min-width: 100%;">
+                    <thead>
+                        <tr>
+                            <th style="padding: 10px 14px; font-size:11px;">Host Name</th>
+                            <th style="padding: 10px 14px; font-size:11px;">Type</th>
+                            <th style="padding: 10px 14px; font-size:11px;">TTL</th>
+                            <th style="padding: 10px 14px; font-size:11px;">Content</th>
+                            <th style="padding: 10px 14px; font-size:11px; text-align: right;">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="dnsRecordsList">
+                        <!-- Dynamic DNS Records go here -->
+                        <tr>
+                            <td colspan="5" style="text-align: center; padding: 20px; color: var(--text-muted);">No DNS records found.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal 4: Terminal Logs -->
+    <div class="overlay" id="viewLogsModal">
+        <div class="modal" style="width: 700px; max-width: 95vw;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h2 style="display: flex; align-items: center; gap: 8px;"><i data-lucide="terminal" style="color: var(--primary);"></i> Live Logs: <span id="logServiceTitle" style="color: var(--primary); text-transform: uppercase;">Service</span></h2>
+                <button class="btn btn-outline" style="padding: 6px 12px;" onclick="closeLogsModal()"><i data-lucide="x"></i> Close</button>
+            </div>
+            
+            <div class="terminal-container">
+                <div class="terminal-header">
+                    <div class="terminal-dots">
+                        <div class="terminal-dot red"></div>
+                        <div class="terminal-dot yellow"></div>
+                        <div class="terminal-dot green"></div>
+                    </div>
+                    <div class="terminal-title" id="terminalTitleService">SERVICE@WIAZART.COM</div>
+                </div>
+                <div class="terminal-content" id="logContent">Reading active journal...</div>
+            </div>
+            <div style="display: flex; justify-content: flex-end; margin-top: 20px; gap: 12px;">
+                <button class="btn btn-outline" onclick="refreshActiveLogs()"><i data-lucide="refresh-cw"></i> Reload Logs</button>
+                <button class="btn btn-primary" onclick="closeLogsModal()">Dismiss</button>
             </div>
         </div>
     </div>
@@ -1012,6 +1470,532 @@
             });
             
             lucide.createIcons();
+
+            if (tabId === 'tab-hosting') {
+                loadHostingDashboard();
+            }
+        }
+
+        // ── WIAZART HOSTING CONTROL PANEL JAVASCRIPT CODE ──
+        async function loadHostingDashboard() {
+            loadHostingServices();
+            loadHostingEmails();
+            loadHostingDomains();
+            loadHostingStatus();
+        }
+
+        // 1. Services Status
+        async function loadHostingServices() {
+            const container = document.getElementById('servicesList');
+            try {
+                const res = await fetch('/api/hosting/services');
+                const services = await res.json();
+                
+                let html = '';
+                const serviceInfoMap = {
+                    pdns: { name: 'PowerDNS Domain Server', desc: 'DNS Zones controller' },
+                    postfix: { name: 'Postfix SMTP Server', desc: 'Outbound corporate mail router' },
+                    nginx: { name: 'Nginx Virtual Proxy', desc: 'Web requests orchestrator' },
+                    dovecot: { name: 'Dovecot IMAP Server', desc: 'Inbound mailboxes database' }
+                };
+                
+                Object.keys(services).forEach(key => {
+                    const status = services[key];
+                    const info = serviceInfoMap[key] || { name: key, desc: 'Ecosystem service component' };
+                    const isRunning = status === 'active';
+                    
+                    html += `
+                        <div class="service-item">
+                            <div class="service-info">
+                                <div class="status-dot" style="width:10px; height:10px; border-radius:50%; background: ${isRunning ? '#10b981' : '#ef4444'}; box-shadow: 0 0 8px ${isRunning ? '#10b981' : '#ef4444'}"></div>
+                                <div>
+                                    <div class="service-name">${info.name}</div>
+                                    <div style="font-size: 11px; color: var(--text-muted); font-weight: 500; margin-top: 2px;">${info.desc}</div>
+                                </div>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 12px;">
+                                <span class="service-status-pill ${isRunning ? 'active' : 'inactive'}">${status}</span>
+                                <button class="btn btn-outline" style="padding: 6px 12px; font-size: 11px; gap: 4px;" onclick="openServiceLogs('${key}')"><i data-lucide="terminal" style="width:12px; height:12px;"></i> Console</button>
+                            </div>
+                        </div>
+                    `;
+                });
+                container.innerHTML = html;
+                lucide.createIcons();
+            } catch (err) {
+                container.innerHTML = `<div style="text-align: center; color: var(--danger); padding: 20px;">Failed to load services: ${err.message}</div>`;
+            }
+        }
+
+        // 2. Email Accounts
+        async function loadHostingEmails() {
+            const tbody = document.getElementById('emailList');
+            try {
+                const res = await fetch('/api/hosting/emails');
+                const emails = await res.json();
+                
+                if (emails.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="3" style="text-align: center; padding: 40px; color: var(--text-muted);">No corporate email accounts configured yet.</td></tr>';
+                    return;
+                }
+                
+                let html = '';
+                emails.forEach(item => {
+                    html += `
+                        <tr>
+                            <td style="padding: 16px 20px; font-weight: 700; color: var(--text-main);"><i data-lucide="mail" style="width:14px; height:14px; display:inline-block; vertical-align:middle; margin-right:6px; color:var(--primary);"></i> ${item.address}</td>
+                            <td style="padding: 16px 20px; color: var(--text-muted);">${item.name || 'Owner'}</td>
+                            <td style="padding: 16px 20px; text-align: right;">
+                                <button class="btn btn-danger" style="padding: 6px 12px; font-size: 11px; gap: 4px;" onclick="deleteEmailAccount('${item.address}')"><i data-lucide="trash-2" style="width:12px; height:12px;"></i> Delete</button>
+                            </td>
+                        </tr>
+                    `;
+                });
+                tbody.innerHTML = html;
+                lucide.createIcons();
+            } catch (err) {
+                tbody.innerHTML = `<tr><td colspan="3" style="text-align: center; color: var(--danger); padding: 20px;">Failed to load emails: ${err.message}</td></tr>`;
+            }
+        }
+
+        // 3. Domain Virtual Hosts list
+        async function loadHostingDomains() {
+            const tbody = document.getElementById('domainsList');
+            try {
+                const res = await fetch('/api/hosting/domains');
+                const domains = await res.json();
+                
+                if (domains.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 40px; color: var(--text-muted);">No hosted domains registered. Click "Add Domain" to get started.</td></tr>';
+                    return;
+                }
+                
+                let html = '';
+                domains.forEach(d => {
+                    const isProxy = d.target_type === 'proxy';
+                    const sslActive = d.ssl_active === 1;
+                    
+                    html += `
+                        <tr>
+                            <td style="font-weight: 800; color: var(--text-main);"><i data-lucide="globe" style="width:14px; height:14px; display:inline-block; vertical-align:middle; margin-right:6px; color:var(--primary);"></i> ${d.domain}</td>
+                            <td><span class="badge ${isProxy ? 'badge-pro' : 'badge-free'}" style="margin: 0;">${isProxy ? 'Reverse Proxy' : 'Static Site'}</span></td>
+                            <td style="font-family: monospace; font-size: 13px; color: var(--text-muted);">${isProxy ? 'Port ' + d.target_value : d.target_value}</td>
+                            <td>
+                                <span class="badge" style="background: ${sslActive ? 'rgba(16, 185, 129, 0.08)' : 'rgba(245, 158, 11, 0.08)'}; color: ${sslActive ? '#10b981' : '#f59e0b'}; border: 1px solid ${sslActive ? 'rgba(16, 185, 129, 0.15)' : 'rgba(245, 158, 11, 0.15)'}; margin: 0;">
+                                    ${sslActive ? 'SSL Let\'s Encrypt' : 'HTTP Only'}
+                                </span>
+                            </td>
+                            <td><span class="active-dot" style="background: ${d.status === 'active' ? 'var(--success)' : 'var(--danger)'}; box-shadow: 0 0 8px ${d.status === 'active' ? 'var(--success)' : 'var(--danger)'}"></span> ${d.status}</td>
+                            <td style="text-align: right;">
+                                <div style="display: flex; gap: 8px; justify-content: flex-end;">
+                                    ${!sslActive ? `<button class="btn btn-outline" style="padding: 6px 12px; font-size: 11px; gap: 4px;" onclick="enableLetEncrypt('${d.domain}')"><i data-lucide="shield" style="width:12px; height:12px; color:#10b981;"></i> SSL</button>` : ''}
+                                    <button class="btn btn-outline" style="padding: 6px 12px; font-size: 11px; gap: 4px;" onclick="openManageDns('${d.domain}')"><i data-lucide="settings" style="width:12px; height:12px;"></i> DNS</button>
+                                    <button class="btn btn-danger" style="padding: 6px 12px; font-size: 11px; gap: 4px;" onclick="deleteHostingDomain('${d.domain}')"><i data-lucide="trash-2" style="width:12px; height:12px;"></i> Delete</button>
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                });
+                tbody.innerHTML = html;
+                lucide.createIcons();
+            } catch (err) {
+                tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: var(--danger); padding: 20px;">Failed to load domains: ${err.message}</td></tr>`;
+            }
+        }
+
+        // 4. Ping / Health Probing ("Hearts")
+        async function loadHostingStatus() {
+            const grid = document.getElementById('heartGrid');
+            try {
+                const res = await fetch('/api/hosting/status');
+                const statusData = await res.json();
+                
+                const keys = Object.keys(statusData);
+                if (keys.length === 0) {
+                    grid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 40px; color: var(--text-muted);"><i data-lucide="cloud-off" style="width:32px; height:32px; margin-bottom:8px; color:var(--text-muted);"></i><div>No nodes to probe. Deploy a virtual host to populate the heart health monitor.</div></div>';
+                    lucide.createIcons();
+                    return;
+                }
+                
+                let html = '';
+                keys.forEach(domain => {
+                    const health = statusData[domain];
+                    const isOnline = health.online;
+                    
+                    html += `
+                        <div class="heart-card">
+                            <div class="heart-node ${isOnline ? 'online' : 'offline'}">
+                                <i data-lucide="${isOnline ? 'heart' : 'heart-off'}"></i>
+                            </div>
+                            <div class="heart-domain-name">${domain}</div>
+                            <div class="heart-domain-meta">
+                                <span>Code: <b>${health.code || 'N/A'}</b></span>
+                                <span>Latency: <b>${health.time}ms</b></span>
+                            </div>
+                        </div>
+                    `;
+                });
+                grid.innerHTML = html;
+                lucide.createIcons();
+            } catch (err) {
+                grid.innerHTML = `<div style="grid-column: 1/-1; text-align: center; color: var(--danger); padding: 20px;">Probing failed: ${err.message}</div>`;
+            }
+        }
+
+        // ── Action Handlers ──
+        function toggleHostingTargetType() {
+            const type = document.getElementById('hostingTargetType').value;
+            const label = document.getElementById('hostingTargetLabel');
+            const input = document.getElementById('hostingTargetValue');
+            
+            if (type === 'static') {
+                label.innerText = 'Document Root Path';
+                input.placeholder = '/var/www/html/dist';
+                input.value = '/var/www/html';
+            } else {
+                label.innerText = 'Local Redirect Port';
+                input.placeholder = 'e.g. 3000, 8080';
+                input.value = '';
+            }
+        }
+
+        function openAddDomainModal() {
+            document.getElementById('hostingDomainName').value = '';
+            document.getElementById('hostingTargetType').value = 'static';
+            toggleHostingTargetType();
+            document.getElementById('addDomainModal').style.display = 'flex';
+        }
+        function closeAddDomainModal() {
+            document.getElementById('addDomainModal').style.display = 'none';
+        }
+        
+        async function saveHostingDomain() {
+            const domain = document.getElementById('hostingDomainName').value.trim();
+            const targetType = document.getElementById('hostingTargetType').value;
+            const targetValue = document.getElementById('hostingTargetValue').value.trim();
+            
+            if (!domain || !targetValue) {
+                alert('All virtual host fields are strictly required');
+                return;
+            }
+            
+            const btn = document.querySelector('#addDomainModal .btn-primary');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="spinner"></i> Provisioning...';
+            btn.disabled = true;
+            
+            try {
+                const res = await fetch('/api/hosting/domains', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ domain, targetType, targetValue })
+                });
+                
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.error || 'Server error deploying virtual host');
+                
+                closeAddDomainModal();
+                alert('Domain virtual host deployed and zone delegated inside PowerDNS!');
+                loadHostingDashboard();
+            } catch (err) {
+                alert('Deployment failed: ' + err.message);
+            } finally {
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+                lucide.createIcons();
+            }
+        }
+        
+        async function deleteHostingDomain(domain) {
+            if (!confirm(`Are you absolutely sure you want to delete ${domain}? This will wipe out Nginx config files, DNS Zones from PowerDNS and SSL certificates permanently!`)) return;
+            
+            try {
+                const res = await fetch('/api/hosting/domains', {
+                    method: 'DELETE',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ domain })
+                });
+                
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.error || 'Error deleting virtual host');
+                
+                alert('Domain successfully cleared from the hosting configuration.');
+                loadHostingDashboard();
+            } catch (err) {
+                alert('Deletion failed: ' + err.message);
+            }
+        }
+
+        function openAddEmailModal() {
+            document.getElementById('emailAddress').value = '';
+            document.getElementById('emailName').value = '';
+            document.getElementById('emailPassword').value = '';
+            document.getElementById('addEmailModal').style.display = 'flex';
+        }
+        function closeAddEmailModal() {
+            document.getElementById('addEmailModal').style.display = 'none';
+        }
+        
+        function generateSecureEmailPass() {
+            const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+-=';
+            let pass = '';
+            for (let i = 0; i < 16; i++) {
+                pass += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            document.getElementById('emailPassword').value = pass;
+        }
+        
+        async function saveEmailAccount() {
+            const email = document.getElementById('emailAddress').value.trim();
+            const name = document.getElementById('emailName').value.trim();
+            const password = document.getElementById('emailPassword').value;
+            
+            if (!email || !password) {
+                alert('Email and password fields are required');
+                return;
+            }
+            
+            const btn = document.querySelector('#addEmailModal .btn-primary');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="spinner"></i> Creating...';
+            btn.disabled = true;
+            
+            try {
+                const res = await fetch('/api/hosting/emails', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password, name })
+                });
+                
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.error || 'Error creating corporate mailbox');
+                
+                closeAddEmailModal();
+                alert('Corporate mailbox created successfully!');
+                loadHostingEmails();
+            } catch (err) {
+                alert('Creation failed: ' + err.message);
+            } finally {
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+                lucide.createIcons();
+            }
+        }
+        
+        async function deleteEmailAccount(email) {
+            if (!confirm(`Are you sure you want to permanently delete the mailbox ${email}?`)) return;
+            
+            try {
+                const res = await fetch('/api/hosting/emails', {
+                    method: 'DELETE',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email })
+                });
+                
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.error || 'Error deleting mailbox');
+                
+                alert('Corporate mailbox removed.');
+                loadHostingEmails();
+            } catch (err) {
+                alert('Deletion failed: ' + err.message);
+            }
+        }
+
+        async function enableLetEncrypt(domain) {
+            if (!confirm(`Request Let's Encrypt SSL certificate for ${domain}? This will reload Nginx automatically once certbot finishes.`)) return;
+            
+            const btn = event.target.closest('button');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="spinner"></i> Activating...';
+            btn.disabled = true;
+            
+            try {
+                const res = await fetch('/api/hosting/ssl', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ domain })
+                });
+                
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.error || 'SSL configuration failed');
+                
+                alert('Let\'s Encrypt SSL active! Secure HTTPS route successfully added.');
+                loadHostingDomains();
+            } catch (err) {
+                alert('SSL request failed: ' + err.message + '\nMake sure your A record points to this VPS IP address.');
+            } finally {
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+                lucide.createIcons();
+            }
+        }
+
+        let currentManageDnsDomain = '';
+        function openManageDns(domain) {
+            currentManageDnsDomain = domain;
+            document.getElementById('dnsActiveDomain').innerText = domain;
+            document.getElementById('dnsRecordsModal').style.display = 'flex';
+            
+            document.getElementById('dnsRecordName').value = '';
+            document.getElementById('dnsRecordType').value = 'A';
+            document.getElementById('dnsRecordContent').value = '';
+            document.getElementById('dnsRecordTtl').value = '3600';
+            
+            loadDnsRecords(domain);
+        }
+        function closeDnsRecordsModal() {
+            document.getElementById('dnsRecordsModal').style.display = 'none';
+        }
+        
+        async function loadDnsRecords(domain) {
+            const tbody = document.getElementById('dnsRecordsList');
+            tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 20px; color: var(--text-muted);"><i class="spinner" style="border-color:var(--primary); border-top-color:transparent;"></i> Fetching active DNS zone...</td></tr>';
+            
+            try {
+                const res = await fetch(`/api/hosting/dns-records/${domain}`);
+                const records = await res.json();
+                
+                if (!res.ok) throw new Error(records.error || 'Failed to query DNS zone');
+                
+                if (records.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 20px; color: var(--text-muted);">No custom records defined inside this zone.</td></tr>';
+                    return;
+                }
+                
+                let html = '';
+                records.forEach(r => {
+                    const isSystemRecord = r.type === 'SOA';
+                    html += `
+                        <tr>
+                            <td style="padding: 10px 14px; font-weight:700; font-family:monospace;">${r.name}</td>
+                            <td style="padding: 10px 14px;"><span class="badge ${r.type === 'A' ? 'badge-pro' : 'badge-free'}" style="padding: 3px 8px; font-size:10px; margin: 0;">${r.type}</span></td>
+                            <td style="padding: 10px 14px; font-family:monospace; color:var(--text-muted); font-size:12px;">${r.ttl}</td>
+                            <td style="padding: 10px 14px; font-family:monospace; font-size:12px; color:var(--text-main); word-break:break-all;">${r.content}</td>
+                            <td style="padding: 10px 14px; text-align: right;">
+                                ${!isSystemRecord ? `<button class="btn btn-danger" style="padding: 4px 8px; font-size:10px; gap: 2px;" onclick="deleteDnsRecord('${r.name}', '${r.type}')"><i data-lucide="trash-2" style="width:10px; height:10px;"></i> Delete</button>` : '<span style="font-size:10px; color:var(--text-muted); font-weight:600;">System</span>'}
+                            </td>
+                        </tr>
+                    `;
+                });
+                tbody.innerHTML = html;
+                lucide.createIcons();
+            } catch (err) {
+                tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: var(--danger); padding: 20px;">Error loading zone: ${err.message}</td></tr>`;
+            }
+        }
+        
+        async function addDnsRecord() {
+            const name = document.getElementById('dnsRecordName').value.trim();
+            const type = document.getElementById('dnsRecordType').value;
+            const content = document.getElementById('dnsRecordContent').value.trim();
+            const ttl = document.getElementById('dnsRecordTtl').value;
+            
+            if (!name || !content) {
+                alert('Record name and content are required');
+                return;
+            }
+            
+            try {
+                const res = await fetch('/api/hosting/dns-records', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ domain: currentManageDnsDomain, name, type, content, ttl })
+                });
+                
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.error || 'Failed to add record');
+                
+                alert('DNS record added to the PowerDNS zone!');
+                
+                document.getElementById('dnsRecordName').value = '';
+                document.getElementById('dnsRecordContent').value = '';
+                
+                loadDnsRecords(currentManageDnsDomain);
+            } catch (err) {
+                alert('Failed to insert DNS record: ' + err.message);
+            }
+        }
+        
+        async function deleteDnsRecord(name, type) {
+            if (!confirm(`Are you sure you want to delete the record ${name} (${type})?`)) return;
+            
+            try {
+                const res = await fetch('/api/hosting/dns-records', {
+                    method: 'DELETE',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ domain: currentManageDnsDomain, name, type })
+                });
+                
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.error || 'Failed to delete record');
+                
+                alert('DNS record deleted successfully.');
+                loadDnsRecords(currentManageDnsDomain);
+            } catch (err) {
+                alert('Failed to delete DNS record: ' + err.message);
+            }
+        }
+
+        let activeLogService = '';
+        function openServiceLogs(service) {
+            activeLogService = service;
+            
+            const friendlyMap = {
+                pdns: 'PowerDNS Container Server',
+                nginx: 'Nginx Native Web Proxy',
+                postfix: 'Postfix Corporate SMTP',
+                dovecot: 'Dovecot IMAP Mail Server',
+                mailserver: 'Poste.io Unified Mail Server'
+            };
+            
+            let apiService = service;
+            if (service === 'postfix' || service === 'dovecot') {
+                apiService = 'mailserver';
+            }
+            
+            document.getElementById('logServiceTitle').innerText = friendlyMap[service] || service;
+            document.getElementById('terminalTitleService').innerText = `${apiService.toUpperCase()}@WIAZART.COM`;
+            document.getElementById('logContent').innerText = 'Accessing remote journal logs...';
+            document.getElementById('viewLogsModal').style.display = 'flex';
+            
+            fetchServiceLogs(apiService);
+        }
+        function closeLogsModal() {
+            document.getElementById('viewLogsModal').style.display = 'none';
+        }
+        function refreshActiveLogs() {
+            let apiService = activeLogService;
+            if (activeLogService === 'postfix' || activeLogService === 'dovecot') {
+                apiService = 'mailserver';
+            }
+            fetchServiceLogs(apiService);
+        }
+        async function fetchServiceLogs(apiService) {
+            const container = document.getElementById('logContent');
+            container.innerText = 'Refreshing remote logs journal...';
+            
+            try {
+                const res = await fetch(`/api/hosting/logs/${apiService}`);
+                const data = await res.json();
+                
+                if (!res.ok) throw new Error(data.error || 'Failed to fetch logs');
+                
+                let cleanLogs = data.logs || 'Sin logs disponibles';
+                cleanLogs = cleanLogs
+                    .replace(/(error|failed|err:|critical|fatal|cannot|unable)/gi, '<span class="error">$1</span>')
+                    .replace(/(success|active|running|done|ok)/gi, '<span class="success">$1</span>')
+                    .replace(/(started|starting|restarting|reload)/gi, '<span class="highlight">$1</span>')
+                    .replace(/(info|debug|notice)/gi, '<span class="dim">$1</span>');
+                
+                container.innerHTML = cleanLogs;
+                
+                const term = document.querySelector('.terminal-container');
+                if (term) term.scrollTop = term.scrollHeight;
+                
+            } catch (err) {
+                container.innerHTML = `<span class="error">Log collection failed: ${err.message}</span>`;
+            }
         }
 
         // Initialization hook
